@@ -1,0 +1,57 @@
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  background: #f3f3f3;
+  color: #111;                                  
+}
+
+.card {
+  margin: 40px auto;
+  padding: 40px;
+  background: #fff;
+}
+h1 {
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+.pron {
+  color: #666;
+  margin: 6px 0 18px;
+}
+.defs {
+  margin: 0;
+}
+.defs dt {
+  text-transform: lowercase;
+  font-weight: 700;
+  margin-top: 8px;
+}
+.defs dd {
+  margin: 0 0 16px 0;
+}
+.defs ol {
+  margin: 6px 0 0 100px;
+  padding: 0;
+}
+.defs li {
+  margin: 10px 0;
+  line-height: 1.4;
+}
+.def {
+    display: block; 
+}
+.ex {
+    display: block; 
+    color: #555; 
+    font-style: italic; 
+    margin-top: 4px;
+}
+.ex.sub{
+    color: #777;
+}
+.syn {
+    display: block; 
+    color: #666; 
+    margin-top: 4px;
+}

@@ -1,0 +1,25 @@
+.task1 {
+  background-color: #f4a6b5; /* светлый фон только у блока 1 */
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.task1 ol {
+  list-style: decimal inside;
+  padding: 0;
+  margin: 0 auto;
+  width: 500px;
+}
+
+.task1 li {
+  background-color: #c25b6b;
+  margin: 10px 0;
+  padding: 10px;
+}
+
+.task1 li span {
+  background-color: #802a3a;
+  padding: 10px 10px;
+  color: white;
+  
+}
