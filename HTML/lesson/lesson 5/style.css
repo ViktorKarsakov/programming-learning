@@ -1,0 +1,76 @@
+.footer {
+  background: #284c62;
+  color: #e7eef3;
+  padding: 28px 0 22px;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* верхняя часть: ссылки + соцсети */
+.footer-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+/* две колонки ссылок */
+.links {
+  display: flex;
+  width: 65%; /* колонки займут примерно 2/3 ширины */
+  justify-content: space-between;
+}
+
+.links .col {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.links .col li + li {
+  margin-top: 10px;
+}
+
+.links a {
+  color: #e7eef3;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
+
+/* картинки соцсетей */
+.social {
+  width: 32px;      /* одинаковая ширина */
+  height: 32px;     /* одинаковая высота */
+  border-radius: 50%; /* сделает их круглыми */
+  object-fit: cover; /* чтобы картинка не вытягивалась */
+  margin: 0;        /* убираем отступы */
+  padding: 0;           
+}
+
+
+.social:hover {
+  transform: scale(1.1); /* лёгкий зум при наведении */
+}
+
+/* разделитель */
+.divider {
+  border: none;
+  border-top: 1px solid #b7c4cd;
+  margin: 22px 0 14px;
+  opacity: 0.8;
+}
+
+/* нижняя строка */
+.footer-bottom p {
+  margin: 0;
+  text-align: center;
+  font-size: 16px;
+}

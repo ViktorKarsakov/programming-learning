@@ -1,0 +1,12 @@
+name                   ->  key pod kotorim znacenie uydet na server ,
+                               esli netu name pole ne otpravitsa
+    type                   ->  cto za pole
+    value                  ->  tekusee znacenie
+    placeholder            ->  podskazka vnutri polya
+    required               ->  obyazatelnoe pole
+    disabled               ->  pole ne dostupno ( ne otpravlyayetsa )
+    readonly               ->  tolko dlya ctenie
+    min,max,step           ->  cislovie oqranicenie
+    maxlength,minlength    ->  oqranicenie po dlinne
+    pattern                ->  requlyarnoe virajenie
+    list                   ->  svyazka s datalist dlya podskazok

@@ -1,0 +1,71 @@
+$span-color: lawngreen;
+$span-color: lightcoral;
+$content-color: lightblue;
+$header-color: green;
+$header-text-color: blue;
+$text-size: 50px;
+$text-size-test:$text-size;
+
+@mixin button-style {
+    border: 2px solid black;
+        width: max-content;
+        margin: 5px;
+        padding: 5px;
+        cursor: pointer;
+        border-radius: 12px;
+        background-color: lightpink;
+}
+
+@mixin btns-types($type){
+    @if $type == mobile{
+        color: red;
+    }
+    @if $type == tanlet{
+        color: blue;
+    }
+    @if $type == desktop{
+        color: green;
+    }
+}
+
+.conteiner {
+    background-color: $header-color;
+    height: 1000px;
+
+    p {
+    background-color: lightcoral;
+    }
+    
+    span {
+    color: yellow;
+    }
+
+    .ok {
+        @include button-style
+    }
+
+    .ok {
+        @include btns-types(desktop)
+    }
+}
+
+.box{
+    font-size: 30px;
+    width: 100px;
+    height: 100px;
+    margin: 5px;
+    border: 5px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+@for $i from 1 through 20 {
+    .box:nth-child(#{$i}) {
+        background-color: rgb(random(255), random(255), random(255))
+    }
+}
+
+
+* {
+    font-size: 30px;
+}

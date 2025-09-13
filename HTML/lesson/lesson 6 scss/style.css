@@ -1,0 +1,118 @@
+.conteiner {
+  background-color: green;
+  height: 1000px;
+}
+.conteiner p {
+  background-color: lightcoral;
+}
+.conteiner span {
+  color: yellow;
+}
+.conteiner .ok {
+  border: 2px solid black;
+  width: -moz-max-content;
+  width: max-content;
+  margin: 5px;
+  padding: 5px;
+  cursor: pointer;
+  border-radius: 12px;
+  background-color: lightpink;
+}
+.conteiner .ok {
+  color: green;
+}
+
+.box {
+  font-size: 30px;
+  width: 100px;
+  height: 100px;
+  margin: 5px;
+  border: 5px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.box:nth-child(1) {
+  background-color: rgb(72, 221, 221);
+}
+
+.box:nth-child(2) {
+  background-color: rgb(166, 78, 137);
+}
+
+.box:nth-child(3) {
+  background-color: rgb(70, 105, 180);
+}
+
+.box:nth-child(4) {
+  background-color: rgb(16, 217, 64);
+}
+
+.box:nth-child(5) {
+  background-color: rgb(40, 206, 109);
+}
+
+.box:nth-child(6) {
+  background-color: rgb(158, 248, 176);
+}
+
+.box:nth-child(7) {
+  background-color: rgb(234, 240, 247);
+}
+
+.box:nth-child(8) {
+  background-color: rgb(62, 207, 83);
+}
+
+.box:nth-child(9) {
+  background-color: rgb(34, 14, 14);
+}
+
+.box:nth-child(10) {
+  background-color: rgb(20, 139, 2);
+}
+
+.box:nth-child(11) {
+  background-color: rgb(107, 154, 218);
+}
+
+.box:nth-child(12) {
+  background-color: rgb(127, 43, 2);
+}
+
+.box:nth-child(13) {
+  background-color: rgb(59, 255, 184);
+}
+
+.box:nth-child(14) {
+  background-color: rgb(171, 55, 18);
+}
+
+.box:nth-child(15) {
+  background-color: rgb(221, 160, 163);
+}
+
+.box:nth-child(16) {
+  background-color: rgb(80, 96, 188);
+}
+
+.box:nth-child(17) {
+  background-color: rgb(232, 191, 44);
+}
+
+.box:nth-child(18) {
+  background-color: rgb(184, 160, 230);
+}
+
+.box:nth-child(19) {
+  background-color: rgb(81, 111, 76);
+}
+
+.box:nth-child(20) {
+  background-color: rgb(43, 10, 188);
+}
+
+* {
+  font-size: 30px;
+}/*# sourceMappingURL=style.css.map */

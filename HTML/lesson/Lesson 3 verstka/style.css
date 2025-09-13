@@ -1,0 +1,61 @@
+body {
+    background-color: lightgray;
+    margin: 0px;
+}
+.container {
+    background-color: white;
+    width: 1000px;
+    height: 500px;
+    margin: auto;
+}
+.header{
+    background-color: aqua;
+    height: 80px;
+}
+.menu{
+    background-color: lightgreen;
+    height: 40px;
+}
+.logo{
+    height: 100%;
+    padding: 10px;
+    padding-left: 30px;
+    box-sizing: border-box;S
+    
+}
+.header-text{
+    color: red;
+    text-align: left;
+    margin: 0px;
+    line-height: 80px;
+}
+.menu ul{
+    margin: 0px;
+}
+.menu ul li{
+    display: inline;
+    line-height: 40px;
+    padding-right: 40px;
+}
+.menu ul li a{
+    text-decoration: none;
+}
+.menu ul li a:hover{
+    color: white;
+}
+.wrapper{
+    display: flex;
+    width: 100%;
+}
+.sidebar{
+    background-color: blue;
+    width: 30%;
+}
+.main{
+    background-color: pink;
+    width: 70%S; 
+}
+.footer{
+    background-color: blue;
+    height: 80px;
+}
