@@ -5,11 +5,11 @@
   grid-template: repeat(6, 1fr)/1fr 2fr 1fr;
   row-gap: 10px;
 }
-.container .message:nth-child(odd) {
+.container .message:nth-child(even) {
   background-color: #FFB6C1;
   border-bottom-left-radius: 0%;
 }
-.container .message:nth-child(even) {
+.container .message:nth-child(odd) {
   background-color: #ADD8E6;
   border-bottom-right-radius: 0%;
 }
