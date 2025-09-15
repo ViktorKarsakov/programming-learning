@@ -1,16 +1,17 @@
 .container {
-  background-color: #F5F5F5;
-  height: 550px;
+  background-color: #f0f0f0;
+  height: 570px;
   display: grid;
   grid-template: repeat(6, 1fr)/1fr 2fr 1fr;
   row-gap: 10px;
 }
 .container .message:nth-child(even) {
-  background-color: #FFB6C1;
+  background-color: #ffb2be;
   border-bottom-left-radius: 0%;
 }
 .container .message:nth-child(odd) {
-  background-color: #ADD8E6;
+  text-align: right;
+  background-color: #a7d3e2;
   border-bottom-right-radius: 0%;
 }
 .container .user-girl {
@@ -43,11 +44,9 @@
   padding: 12px 20px;
 }
 
-.user-boy p,
-.user-girl p {
+.user-boy p, .user-girl p {
   margin-bottom: 0%;
 }
-.user-boy small,
-.user-girl small {
-  color: #BBC5D1;
+.user-boy small, .user-girl small {
+  color: #b6bec9;
 }/*# sourceMappingURL=style.css.map */
