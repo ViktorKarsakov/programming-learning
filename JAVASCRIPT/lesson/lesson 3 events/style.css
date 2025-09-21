@@ -1,0 +1,23 @@
+.parent {
+  width: 200px;
+  height: 200px;
+  background-color: red;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 5px solid black;
+  margin: 5px;
+  font-size: 35px;
+}
+
+.child {
+  width: 100px;
+  height: 100px;
+  background-color: green;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 5px solid black;
+  margin: 5px;
+  font-size: 35px;
+}/*# sourceMappingURL=style.css.map */
