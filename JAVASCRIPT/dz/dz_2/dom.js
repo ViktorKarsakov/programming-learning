@@ -6,28 +6,45 @@ let box = {
         bottom: 0,
         right: 0,
     }
-    //  box.element.remove();
+   
 let isTop = false;
-let isBotton = false;
+let isBottom = false;
 let isRight = false;
-setInterval(() => {
-    console.log("Farid");
-
-    if (box.top < window.innerHeight - 125 /* && isBotton == false */) {
+let isLeft = false;
+let count = 1;
+    
+let interval = setInterval(() => {
+    
+    if (box.top < window.innerHeight - 120 && isBottom == false) {
         box.top += 10;
-       /*  isTop = true; */
-    } else if (box.left < window.innerWidth - 130) {
-
+        isTop = true;
+    } else if (box.left < window.innerWidth - 120 && isRight == false) {
         box.left += 10;
-    } else if (box.top > 0 /* && isTop == true */) {
+        isLeft = true;
+    } else if (box.top > 0 && isTop == true) {
         box.top -= 10;
-        /* isBotton = true; */
-    } else if (box.left > 0){
-        box.right -= 10;
+        isBottom = true;
+    } else if (box.left > 0 && isLeft == true){
+        box.left -= 10;
+        isRight = true;
+        
+        if (box.left <= 0) {
+            isTop = false;
+            isBottom = false;
+            isRight = false;
+            isLeft = false;
+            count++;
+            box.element.innerText = count;
+            
+        }
+        if(count >= 4){
+            box.element.remove();
+            clearInterval(interval);
+        }
     }
+    
 
     box.element.style.top = box.top + "px";
     box.element.style.left = box.left + "px";
-    box.element.style.bottom = box.bottom + "px";
-    box.element.style.bottom = box.right + "px";
 }, 10);
+
