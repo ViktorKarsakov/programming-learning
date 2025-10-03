@@ -34,83 +34,83 @@
 }
 
 .box:nth-child(1) {
-  background-color: rgb(72, 221, 221);
+  background-color: rgb(66, 199, 126);
 }
 
 .box:nth-child(2) {
-  background-color: rgb(166, 78, 137);
+  background-color: rgb(230, 207, 11);
 }
 
 .box:nth-child(3) {
-  background-color: rgb(70, 105, 180);
+  background-color: rgb(220, 198, 79);
 }
 
 .box:nth-child(4) {
-  background-color: rgb(16, 217, 64);
+  background-color: rgb(124, 140, 194);
 }
 
 .box:nth-child(5) {
-  background-color: rgb(40, 206, 109);
+  background-color: rgb(123, 138, 50);
 }
 
 .box:nth-child(6) {
-  background-color: rgb(158, 248, 176);
+  background-color: rgb(75, 143, 184);
 }
 
 .box:nth-child(7) {
-  background-color: rgb(234, 240, 247);
+  background-color: rgb(131, 80, 138);
 }
 
 .box:nth-child(8) {
-  background-color: rgb(62, 207, 83);
+  background-color: rgb(97, 197, 191);
 }
 
 .box:nth-child(9) {
-  background-color: rgb(34, 14, 14);
+  background-color: rgb(229, 138, 180);
 }
 
 .box:nth-child(10) {
-  background-color: rgb(20, 139, 2);
+  background-color: rgb(150, 139, 147);
 }
 
 .box:nth-child(11) {
-  background-color: rgb(107, 154, 218);
+  background-color: rgb(38, 206, 86);
 }
 
 .box:nth-child(12) {
-  background-color: rgb(127, 43, 2);
+  background-color: rgb(166, 170, 176);
 }
 
 .box:nth-child(13) {
-  background-color: rgb(59, 255, 184);
+  background-color: rgb(232, 129, 98);
 }
 
 .box:nth-child(14) {
-  background-color: rgb(171, 55, 18);
+  background-color: rgb(111, 77, 112);
 }
 
 .box:nth-child(15) {
-  background-color: rgb(221, 160, 163);
+  background-color: rgb(206, 108, 244);
 }
 
 .box:nth-child(16) {
-  background-color: rgb(80, 96, 188);
+  background-color: rgb(181, 88, 65);
 }
 
 .box:nth-child(17) {
-  background-color: rgb(232, 191, 44);
+  background-color: rgb(95, 122, 242);
 }
 
 .box:nth-child(18) {
-  background-color: rgb(184, 160, 230);
+  background-color: rgb(80, 242, 109);
 }
 
 .box:nth-child(19) {
-  background-color: rgb(81, 111, 76);
+  background-color: rgb(192, 100, 84);
 }
 
 .box:nth-child(20) {
-  background-color: rgb(43, 10, 188);
+  background-color: rgb(209, 209, 154);
 }
 
 * {

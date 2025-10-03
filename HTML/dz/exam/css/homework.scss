@@ -1,0 +1,57 @@
+@use 'theme';
+
+// Шапка-навигация
+.navbar.navbar-light {
+  .bg-blue { color:#fff;
+    .nav-link {
+      &.text-light { color:#fff !important; }
+      &.text-muted { color: rgba(255,255,255,.7) !important; }
+    }
+    .navbar-toggler { border-color:#fff; }
+  }
+}
+
+// Верхняя строка: JS | Homework | легенда справа
+.container {
+  .row:first-child {
+    .col ul {
+      list-style: none; margin:0; padding:0;
+      li { line-height: 1.2; }
+      small { color: theme.$text-muted; }
+    }
+  }
+}
+
+// Карточки JavaScript
+.card {
+  .card-body.bg-grey-light { background: theme.$grey-50; }
+  .card-body.bg-light-blue { background: theme.$blue-600; color:#fff; }
+  .card-title { font-weight:600; }
+}
+
+// Инпут-чузер с «Browse» (как у препода)
+.input-group { &.border { border-color: theme.$border !important; } }
+.input-group.custom-chooser { @extend .input-group; }
+
+// Парные кнопки на цветных карточках
+.box.mt-3 {
+  .btn {
+    @extend .btn;
+    @extend .square;
+    &.bg-light-blue, &.bg-green {
+      color:#fff !important;
+      border-color: rgba(255,255,255,.6) !important;
+      &:hover { filter: brightness(1.05); }
+    }
+  }
+}
+
+// Секция HTML & CSS — те же правила + розовый/зелёный фон
+.bg-pink { color:#000; }
+.bg-green {
+  .box .badge, .bg-green-black { color:#fff; }
+}
+.bg-green-black { @extend .badge-green-pill; }
+
+// Мелкие иконки в кнопках
+.icons-mini { @extend .icons-mini; }

@@ -1,0 +1,31 @@
+@use 'theme';
+
+.navbar.navbar-light {
+  .bg-blue { color:#fff;
+    .nav-link {
+      &.text-light { color:#fff !important; }
+      &.text-muted { color: rgba(255,255,255,.7) !important; }
+    }
+    .navbar-toggler { border-color:#fff; }
+  }
+}
+
+h1.text-center { margin: 1rem 0; }
+
+// Верхняя плашка с заголовками AVATAR | STUDENTS INFO | CHANGE PASSWORD
+.container .row.bg-blue-light {
+  padding: .5rem 0;
+  p { margin:0; font-weight:600; letter-spacing:.02em; }
+}
+
+// Левая колонка с аватаром
+.col-2 {
+  img { display:block; width:100%; height:auto; margin-bottom:.5rem; }
+  .btn { width:100%; }
+}
+
+// Средняя и правая колонка формы
+.col-5 {
+  input.form-control { margin: .75rem; }
+  .btn { margin: .75rem; margin-top: 0; width: calc(100% - 1.5rem); }
+}
