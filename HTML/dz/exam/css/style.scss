@@ -1,21 +1,30 @@
 @use 'theme';
 
-.navbar.navbar-light {
-  .bg-blue { 
-    color:#fff;
-    .nav-link {
-      &.active, &.text-light { 
-        color:#fff !important; 
-        }
-      &.text-muted { 
-        color: rgba(255,255,255,.7) !important; 
-        }
-    }
-    .navbar-toggler { 
-        border-color:#fff; 
-    }
-  }
-}
+$blue:       #1d4ed8;
+$blue-600:   #2aa7b0; 
+$pink:       #ffd6e7;
+$green:      #22c55e;
+$green-dark: #14532d;
+$grey-50:    #f7f7f9;
+$border:     #e5e7eb;
+
+
+.bg-blue { background-color: $blue !important; }
+.icon { width: 40px; height: 40px; }
+
+
+$blue: #1d4ed8;
+$nav-text-muted: rgba(255,255,255,.7);
+
+.bg-blue { background-color: $blue !important; }
+.icon    { width: 40px; height: 40px; }
+
+.navbar .nav-link { font-weight: 500; }
+.navbar .nav-link.text-muted { color: $nav-text-muted !important; }
+.navbar .nav-link.active     { color: #fff !important; }
+
+
+.navbar-toggler { border-color: #fff !important; }
 
 h3.text-center { 
     margin-bottom: .75rem; 
@@ -38,24 +47,23 @@ h3.text-center {
     padding:.5rem 1rem; 
 }
 
-/* 1) Безопасная базовая настройка картинок */
 img { max-width: 100%; height: auto; }
 
-/* 2) Точный размер медалей в Rewards */
+
 .icons {
-  width: 28px !important;   /* можно 24px, если хочешь ещё меньше */
+  width: 28px !important;  
   height: 28px !important;
   object-fit: contain;
   flex: 0 0 auto;
   display: inline-block;
 }
 
-/* 3) На очень узких экранах можно ещё компактнее */
+
 @media (max-width: 576px) {
   .icons { width: 24px !important; height: 24px !important; }
 }
 .reward-icon {
-  width: 32px;     /* можно 28px или 24px, если нужно меньше */
+  width: 32px;
   height: 32px;
   object-fit: contain;
   flex-shrink: 0;

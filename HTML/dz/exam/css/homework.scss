@@ -1,57 +1,51 @@
-@use 'theme';
 
-// Шапка-навигация
-.navbar.navbar-light {
-  .bg-blue { color:#fff;
-    .nav-link {
-      &.text-light { color:#fff !important; }
-      &.text-muted { color: rgba(255,255,255,.7) !important; }
-    }
-    .navbar-toggler { border-color:#fff; }
-  }
+$blue:       #1d4ed8;
+$blue-600:   #2aa7b0; 
+$pink:       #ffd6e7;
+$green:      #22c55e;
+$green-dark: #14532d;
+$grey-50:    #f7f7f9;
+$border:     #e5e7eb;
+
+.bg-blue { background-color: $blue !important; }
+.icon { width: 40px; height: 40px; }
+
+
+.legend { line-height: 1.25; }
+.dot { display:inline-block; width:.6rem; height:.6rem; border-radius:50%; margin-left:.4rem; vertical-align:middle; }
+.dot-current  { background:#fff; border:1px solid #aaa; }
+.dot-reviewed { background:#22c55e; }
+.dot-under    { background:#0ea5e9; }
+.dot-overdue  { background:#f59e0b; }
+
+.bg-grey-light { background-color: $grey-50 !important; }
+.bg-light-blue { background-color: $blue-600 !important; }
+.bg-pink       { background-color: $pink !important; }
+.bg-green      { background-color: $green !important; }
+.bg-green-dark { background-color: $green-dark !important; }
+
+
+.input-group.chooser {
+  border: 1px solid $border;
+  border-radius: .25rem;
+  .form-control { border:0; }
+  .btn { border-left: 1px solid $border; }
 }
 
-// Верхняя строка: JS | Homework | легенда справа
-.container {
-  .row:first-child {
-    .col ul {
-      list-style: none; margin:0; padding:0;
-      li { line-height: 1.2; }
-      small { color: theme.$text-muted; }
-    }
-  }
+
+.btn.btn-sm {
+  padding: .375rem .5rem;
+  line-height: 1.2;
+}
+.icon-mini {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  flex: 0 0 16px;
 }
 
-// Карточки JavaScript
-.card {
-  .card-body.bg-grey-light { background: theme.$grey-50; }
-  .card-body.bg-light-blue { background: theme.$blue-600; color:#fff; }
-  .card-title { font-weight:600; }
-}
 
-// Инпут-чузер с «Browse» (как у препода)
-.input-group { &.border { border-color: theme.$border !important; } }
-.input-group.custom-chooser { @extend .input-group; }
+.btn img { max-width:none; height:auto; }
 
-// Парные кнопки на цветных карточках
-.box.mt-3 {
-  .btn {
-    @extend .btn;
-    @extend .square;
-    &.bg-light-blue, &.bg-green {
-      color:#fff !important;
-      border-color: rgba(255,255,255,.6) !important;
-      &:hover { filter: brightness(1.05); }
-    }
-  }
-}
 
-// Секция HTML & CSS — те же правила + розовый/зелёный фон
-.bg-pink { color:#000; }
-.bg-green {
-  .box .badge, .bg-green-black { color:#fff; }
-}
-.bg-green-black { @extend .badge-green-pill; }
-
-// Мелкие иконки в кнопках
-.icons-mini { @extend .icons-mini; }
+img { max-width: 100%; height: auto; }

@@ -126,21 +126,22 @@
   border-radius: 0 !important;
 }
 
-.navbar.navbar-light .bg-blue {
-  color: #fff;
-}
-.navbar.navbar-light .bg-blue .nav-link.text-light {
-  color: #fff !important;
-}
-.navbar.navbar-light .bg-blue .nav-link.text-muted {
-  color: rgba(255, 255, 255, 0.7) !important;
-}
-.navbar.navbar-light .bg-blue .navbar-toggler {
-  border-color: #fff;
+.bg-blue {
+  background-color: #1d4ed8 !important;
 }
 
-h1.text-center {
-  margin: 1rem 0;
+.icon {
+  width: 40px;
+  height: 40px;
+}
+
+.bg-blue {
+  background-color: #1d4ed8 !important;
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
 }
 
 .container .row.bg-blue-light {
