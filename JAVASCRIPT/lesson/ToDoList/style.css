@@ -1,0 +1,31 @@
+.list-group-item {
+  display: flex;
+  justify-content: space-between;
+}
+.list-group-item i {
+  margin: 5px;
+}
+.list-group-item i:hover {
+  cursor: pointer;
+}
+
+* {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+
+.done {
+  background-color: green;
+}
+
+.options {
+  width: -moz-max-content;
+  width: max-content;
+  margin: 5px;
+  font-size: 15px;
+}
+.options button {
+  width: 30px;
+  height: 30px;
+}/*# sourceMappingURL=style.css.map */

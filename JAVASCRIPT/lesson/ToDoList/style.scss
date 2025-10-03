@@ -1,0 +1,31 @@
+ .list-group-item {
+     display: flex;
+     justify-content: space-between;
+     &:hover {
+         //  background-color: lightgray;
+     }
+     i {
+         margin: 5px;
+         &:hover {
+             cursor: pointer;
+         }
+     }
+ }
+ 
+ * {
+     user-select: none;
+ }
+ 
+ .done {
+     background-color: green;
+ }
+ 
+ .options {
+     width: max-content;
+     margin: 5px;
+     font-size: 15px;
+     button {
+         width: 30px;
+         height: 30px;
+     }
+ }
