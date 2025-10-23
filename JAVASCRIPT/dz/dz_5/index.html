@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Movie Search (OMDb)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <section class="search">
+      <h2>Search:</h2>
+      <form id="searchForm">
+        <label>
+          <span>Title:</span>
+          <input id="titleInput" type="text" placeholder="e.g. hello" required />
+        </label>
+
+        <label>
+          <span>Type:</span>
+          <select id="typeSelect">
+            <option value="">Any</option>
+            <option value="movie" selected>Movie</option>
+            <option value="series">Series</option>
+            <option value="episode">Episode</option>
+          </select>
+        </label>
+
+        <button id="searchBtn" type="submit">Search</button>
+      </form>
+    </section>
+
+    <section id="results" class="results" hidden>
+      <h3>Films:</h3>
+      <div id="cards" class="cards"></div>
+      <nav id="pagination" class="pagination"></nav>
+    </section>
+
+    <section id="details" class="details" hidden>
+      <h3>Film info:</h3>
+      <div id="detailsContent" class="details-content"></div>
+    </section>
+
+    <template id="cardTpl">
+      <article class="card">
+        <img class="poster" alt="Poster"/>
+        <div class="meta">
+          <div class="type"></div>
+          <h4 class="title"></h4>
+          <div class="year"></div>
+          <button class="detailsBtn" type="button">Details</button>
+        </div>
+      </article>
+    </template>
+
+    <div id="toast" class="toast" hidden></div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+body {
+  background-color: #f7e6cc;
+  font-family: Georgia, serif;
+}
+body .container {
+  border: 1px solid #333;
+  padding: 20px;
+  margin: 20px auto;
+  width: 80%;
+  max-width: 700px;
+  background-color: #f5e3c1;
+}
+body .container h1 {
+  font-size: 2em;
+  font-weight: bold;
+}
+body .container label {
+  font-size: 1.2em;
+}
+body .container input[type=text],
+body .container input[type=number] {
+  padding: 5px;
+  font-size: 1em;
+  width: 80px;
+}
+body .container input[type=checkbox] {
+  transform: scale(1.2);
+  margin-right: 5px;
+}
+body .container button {
+  margin-top: 10px;
+  padding: 5px 20px;
+  font-size: 1em;
+  cursor: pointer;
+}
+body .container #result {
+  margin-top: 20px;
+  font-size: 1.2em;
+}
+body .container #output {
+  font-size: 1.2em;
+  padding: 5px;
+  width: 80%;
+}/*# sourceMappingURL=style.css.map */

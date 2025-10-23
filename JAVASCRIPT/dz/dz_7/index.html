@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Random String Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Random String Generator</h1>
+
+    <p>String should be<input type="number" id="length" min="1" placeholder="0">characters long</p>
+
+    <p>Which characters are allowed to occur in the strings?</p>
+
+    <label><input type="checkbox" id="digits"> Numeric digits (0-9)</label><br>
+    <label><input type="checkbox" id="upper"> Uppercase letters (A-Z)</label><br>
+    <label><input type="checkbox" id="lower"> Lowercase letters (a-z)</label><br>
+
+    <button id="generate">Generate</button>
+
+    <hr>
+
+    <p>Result:</p>
+    <input type="text" id="output" readonly>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
