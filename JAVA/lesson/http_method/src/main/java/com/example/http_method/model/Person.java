@@ -1,9 +1,10 @@
-package com.example.demo.model;
+package com.example.http_method.model;
 
 public class Person {
     private String name;
     private String surname;
     private int age;
+
 
     public Person(String name, String surname, int age) {
         this.name = name;
