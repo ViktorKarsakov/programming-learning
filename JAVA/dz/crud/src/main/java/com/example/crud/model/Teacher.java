@@ -10,8 +10,7 @@ public class Teacher {
     private String email;
     private boolean isActive;
 
-    public Teacher(Integer id, String firstName, String lastName, String subject, Integer experience, Double salary, String email, boolean isActive) {
-        this.id = id;
+    public Teacher(String firstName, String lastName, String subject, Integer experience, Double salary, String email, boolean isActive) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.subject = subject;
