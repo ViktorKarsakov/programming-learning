@@ -1,6 +1,7 @@
 package com.example.crud.model;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 public class ErrorResponse {
@@ -8,7 +9,15 @@ public class ErrorResponse {
     private int status;
     private String error;
     private String message;
-    List<String> errors;
+    private List<String> errors;
+
+    public ErrorResponse(int status, String error, String message, List<String> errors) {
+        this.timestamp = LocalDateTime.now();
+        this.status = status;
+        this.error = error;
+        this.message = message;
+        this.errors = errors;
+    }
 
     public LocalDateTime getTimestamp() {
         return timestamp;
@@ -50,5 +59,12 @@ public class ErrorResponse {
         this.errors = errors;
     }
 
-    
+
+    public static ErrorResponse badRequest(String message, List<String> errors) {
+        return new ErrorResponse(400, "Bad Request", message, errors);
+    }
+
+    public static ErrorResponse notFound(String message) {
+        return new ErrorResponse(404, "Not Found", message, null);
+    }
 }
