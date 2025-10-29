@@ -104,7 +104,7 @@ public class TeacherController {
     public ResponseEntity<?> getTeacherBySubject(@PathVariable(name = "subject") String subject) {
         List<String> validationMessages = new ArrayList<>();
         if (subject == null || subject.trim().isEmpty()){
-            validationMessages.add("Subject must not be empty");
+            validationMessages.add("Subject is required");
         }
         if (!validationMessages.isEmpty()) {
             ErrorResponse response = ErrorResponse.badRequest("Validation failed", validationMessages);
@@ -161,5 +161,16 @@ public class TeacherController {
         return ResponseEntity.ok(foundTeachers);
     }
 
-    
+    @GetMapping("/active")
+    public ResponseEntity<?> getActiveTeachers() {
+        if (teachers.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<Teacher> foundTeachers = teachers.stream().filter(Teacher::isActive).toList();
+        if (foundTeachers.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(foundTeachers);
+    }
 }
