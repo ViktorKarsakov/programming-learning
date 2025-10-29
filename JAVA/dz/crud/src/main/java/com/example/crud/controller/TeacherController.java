@@ -71,7 +71,7 @@ public class TeacherController {
         if (lastName != null && !lastName.isBlank() && !lastName.matches("^[A-Za-zА-Яа-яЁё]+$")){
             validationMessages.add("Last name must contain only letters");
         }
-        if (firstName != null && !lastName.isBlank() && (firstName.length() < 2 || firstName.length() > 50)){
+        if (firstName != null && !firstName.isBlank() && (firstName.length() < 2 || firstName.length() > 50)){
             validationMessages.add("First name must be between 2 and 50 characters");
         }
         if (lastName != null && !lastName.isBlank() && (lastName.length() < 2 || lastName.length() > 50)){
@@ -100,4 +100,66 @@ public class TeacherController {
         return ResponseEntity.ok(foundTeachers);
     }
 
+    @GetMapping("/{subject}")
+    public ResponseEntity<?> getTeacherBySubject(@PathVariable(name = "subject") String subject) {
+        List<String> validationMessages = new ArrayList<>();
+        if (subject == null || subject.trim().isEmpty()){
+            validationMessages.add("Subject must not be empty");
+        }
+        if (!validationMessages.isEmpty()) {
+            ErrorResponse response = ErrorResponse.badRequest("Validation failed", validationMessages);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        String sub = subject.toLowerCase().trim();
+
+        List<Teacher> foundTeachers = teachers.stream().filter(t -> t.getSubject().toLowerCase().trim().contains(sub)).toList();
+        if (foundTeachers.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(foundTeachers);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<?> getTeacherByExpAndSalary(
+            @RequestParam(name = "minExp", required = false) Integer minExp,
+            @RequestParam(name = "maxExp", required = false) Integer maxExp,
+            @RequestParam(name = "minSalary", required = false) Integer minSalary,
+            @RequestParam(name = "maxSalary", required = false) Integer maxSalary) {
+
+        List<String> validationMessages = new ArrayList<>();
+        if (minExp > maxExp) {
+            validationMessages.add("Min exp must be greater than max exp");
+        }
+        if (minSalary > maxSalary) {
+            validationMessages.add("Min salary must be greater than max salary");
+        }
+        if (minExp < 0 || maxExp < 0){
+            validationMessages.add("Experience values cannot be negative");
+        }
+        if (minSalary < 0 || maxSalary < 0){
+            validationMessages.add("Salary values cannot be negative");
+        }
+        if (!validationMessages.isEmpty()) {
+            ErrorResponse response = ErrorResponse.badRequest("Validation failed", validationMessages);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        if (minExp == null && maxExp == null && minSalary == null && maxSalary == null) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<Teacher> foundTeachers = teachers.stream()
+                .filter(t ->
+                (minExp == null || t.getExperience() >= minExp) &&
+                (maxExp == null || t.getExperience() <= maxExp) &&
+                (minSalary == null || t.getSalary() >= minSalary) &&
+                (maxSalary == null || t.getSalary() <= maxSalary))
+                .toList();
+        if (foundTeachers.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(foundTeachers);
+    }
+
+    
 }
