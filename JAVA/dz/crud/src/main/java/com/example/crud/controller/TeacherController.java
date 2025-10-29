@@ -2,13 +2,12 @@ package com.example.crud.controller;
 
 import com.example.crud.model.ErrorResponse;
 import com.example.crud.model.Teacher;
+import com.example.crud.model.TeacherDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/teacher")
@@ -172,5 +171,88 @@ public class TeacherController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(foundTeachers);
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<?> getTeacherCount() {
+        return ResponseEntity.ok(Map.of("count", teachers.size()));
+    }
+
+    @GetMapping("/count-by-subject")
+    public ResponseEntity<?> getTeacherCountBySubject() {
+        Map<String, Integer> groupSub = new HashMap<>();
+        if (teachers.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        for (Teacher teacher : teachers) {
+            String subject = teacher.getSubject().trim();
+            if (groupSub.containsKey(subject)) {
+                groupSub.put(subject, groupSub.get(subject) + 1);
+            } else {
+                groupSub.put(subject, 1);
+            }
+            if (groupSub.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+        }
+        return ResponseEntity.ok(groupSub);
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<?> addTeacher(@RequestBody TeacherDTO teacher) {
+        List<String> validationMessages = new ArrayList<>();
+        if (teacher.getFirstName() == null || teacher.getFirstName().isBlank()) {
+            validationMessages.add("First name is required");
+        }
+        if (teacher.getFirstName().length() < 2 || teacher.getFirstName().length() > 50){
+            validationMessages.add("First name must be between 2 and 50 characters");
+        }
+        if (teacher.getLastName() == null || teacher.getLastName().isBlank()) {
+            validationMessages.add("Last name is required");
+        }
+        if (teacher.getLastName().length() < 2 || teacher.getLastName().length() > 50){
+            validationMessages.add("Last name must be between 2 and 50 characters");
+        }
+        if (teacher.getSubject() == null || teacher.getSubject().isBlank()) {
+            validationMessages.add("Subject is required");
+        }
+        if (teacher.getExperience() == null || teacher.getExperience() < 0 || teacher.getExperience() > 50) {
+            validationMessages.add("Experience values must be between 0 and 50");
+        }
+        if (teacher.getSalary() == null || teacher.getSalary() < 0 || teacher.getSalary() > 100000) {
+            validationMessages.add("Salary values must be between 0 and 100000");
+        }
+        if (teacher.getEmail() == null || !teacher.getEmail().matches("^[\\w.-]+@[\\w.-]+\\.[a-z]{2,}$")) {
+            validationMessages.add("Invalid email address");
+        }
+
+        if (!validationMessages.isEmpty()) {
+            ErrorResponse response = ErrorResponse.badRequest("Validation failed", validationMessages);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        boolean duplicate = teachers.stream()
+                .anyMatch(t -> t.getFirstName().equalsIgnoreCase(teacher.getFirstName()) &&
+                t.getLastName().equalsIgnoreCase(teacher.getLastName()));
+        if (duplicate) {
+            validationMessages.add("Duplicate first name and last name");
+            ErrorResponse response = ErrorResponse.conflict("Duplicate first name and last name");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        }
+
+        Teacher newTeacher = new Teacher(
+                teacher.getFirstName(),
+                teacher.getLastName(),
+                teacher.getSubject(),
+                teacher.getExperience(),
+                teacher.getSalary(),
+                teacher.getEmail(),
+                teacher.isActive()
+        );
+        newTeacher.setId(nextId++);
+        teachers.add(newTeacher);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(newTeacher);
+
     }
 }

@@ -67,4 +67,8 @@ public class ErrorResponse {
     public static ErrorResponse notFound(String message) {
         return new ErrorResponse(404, "Not Found", message, null);
     }
+
+    public static ErrorResponse conflict (String message) {
+        return new ErrorResponse(409, "Conflict", message, null);
+    }
 }
