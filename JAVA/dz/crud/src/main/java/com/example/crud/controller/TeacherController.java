@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.Inet4Address;
 import java.util.*;
 
 @RestController
@@ -236,7 +237,7 @@ public class TeacherController {
                 t.getLastName().equalsIgnoreCase(teacher.getLastName()));
         if (duplicate) {
             validationMessages.add("Duplicate first name and last name");
-            ErrorResponse response = ErrorResponse.conflict("Duplicate first name and last name");
+            ErrorResponse response = ErrorResponse.conflict("Validation failed");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
 
@@ -255,4 +256,93 @@ public class TeacherController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newTeacher);
 
     }
+
+    @PostMapping("/add-bulk")
+    public ResponseEntity<?> addTeacherBulk(@RequestBody List<TeacherDTO> teachersDTO) {
+        List<String> validationMessages = new ArrayList<>();
+        int added = 0;
+        int failed = 0;
+        if (teachersDTO == null || teachersDTO.isEmpty()) {
+            validationMessages.add("Teachers is required");
+            ErrorResponse response = ErrorResponse.badRequest("Validation failed", validationMessages);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        for (int i = 0; i < teachersDTO.size(); i++) {
+            TeacherDTO teacherDTO = teachersDTO.get(i);
+            int n = i + 1;
+
+            if (teacherDTO.getFirstName() == null || teacherDTO.getFirstName().trim().isBlank()) {
+                validationMessages.add("teacher " + n + ": " + "First name is required");
+                failed++;
+                continue;
+            }
+            if (teacherDTO.getFirstName().length() < 2 || teacherDTO.getFirstName().trim().length() > 50){
+                validationMessages.add("teacher " + n + ": " + "First name must be between 2 and 50 characters");
+                failed++;
+                continue;
+            }
+            if (teacherDTO.getLastName() == null || teacherDTO.getLastName().trim().isBlank()) {
+                validationMessages.add("teacher " + n + ": " + "Last name is required");
+                failed++;
+                continue;
+            }
+            if (teacherDTO.getLastName().length() < 2 || teacherDTO.getLastName().trim().length() > 50){
+                validationMessages.add("teacher " + n + ": " + "Last name must be between 2 and 50 characters");
+                failed++;
+                continue;
+            }
+            if (teacherDTO.getSubject() == null || teacherDTO.getSubject().trim().isBlank()) {
+                validationMessages.add("teacher " + n + ": " + "Subject is required");
+                failed++;
+                continue;
+            }
+            if (teacherDTO.getExperience() == null || teacherDTO.getExperience() < 0 || teacherDTO.getExperience() > 50) {
+                validationMessages.add("teacher " + n + ": " + "Experience values must be between 0 and 50");
+                failed++;
+                continue;
+            }
+            if (teacherDTO.getSalary() == null || teacherDTO.getSalary() < 0 || teacherDTO.getSalary() > 100000) {
+                validationMessages.add("teacher " + n + ": " + "Salary values must be between 0 and 100000");
+                failed++;
+                continue;
+            }
+            if (teacherDTO.getEmail() == null || !teacherDTO.getEmail().trim().matches("^[\\w.-]+@[\\w.-]+\\.[a-z]{2,}$")) {
+                validationMessages.add("teacher " + n + ": " + "Invalid email address");
+                failed++;
+                continue;
+            }
+
+            boolean duplicate = teachers.stream()
+                    .anyMatch(t -> t.getFirstName().trim().equalsIgnoreCase(teacherDTO.getFirstName().trim()) &&
+                            t.getLastName().trim().equalsIgnoreCase(teacherDTO.getLastName().trim()));
+
+            if (duplicate){
+                validationMessages.add("teacher " + n + ": " + "Duplicate first name and last name");
+                failed++;
+                continue;
+            }
+
+            Teacher newTeacher = new Teacher(
+                    teacherDTO.getFirstName(),
+                    teacherDTO.getLastName(),
+                    teacherDTO.getSubject(),
+                    teacherDTO.getExperience(),
+                    teacherDTO.getSalary(),
+                    teacherDTO.getEmail(),
+                    teacherDTO.isActive()
+            );
+            newTeacher.setId(nextId++);
+            teachers.add(newTeacher);
+            added++;
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("added", added);
+        result.put("failed", failed);
+        result.put("errors", validationMessages);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    
 }
