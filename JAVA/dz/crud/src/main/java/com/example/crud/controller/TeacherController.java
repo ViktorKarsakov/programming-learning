@@ -344,5 +344,143 @@ public class TeacherController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    
+    @PutMapping("/update-partial/{id}")
+    public ResponseEntity<?> partialUpdateTeacher(@PathVariable int id, @RequestBody TeacherDTO teacherDTO) {
+        List<String> validationMessages = new ArrayList<>();
+
+        String firstName = (teacherDTO.getFirstName() == null) ? null : teacherDTO.getFirstName().trim().toLowerCase();
+        String lastName = (teacherDTO.getLastName() == null) ? null : teacherDTO.getLastName().trim().toLowerCase();
+        String subject = (teacherDTO.getSubject() == null) ? null : teacherDTO.getSubject().trim().toLowerCase();
+        String email = (teacherDTO.getEmail() == null) ? null : teacherDTO.getEmail().trim().toLowerCase();
+
+
+        if (firstName == null || firstName.isBlank()) {
+            validationMessages.add("First name is required");
+        }
+        if (firstName.length() < 2 || firstName.length() > 50){
+            validationMessages.add("First name must be between 2 and 50 characters");
+        }
+        if (lastName == null || lastName.isBlank()) {
+            validationMessages.add("Last name is required");
+        }
+        if (lastName.length() < 2 || lastName.length() > 50){
+            validationMessages.add("Last name must be between 2 and 50 characters");
+        }
+        if (subject == null || subject.isBlank()) {
+            validationMessages.add("Subject is required");
+        }
+        if (teacherDTO.getExperience() == null || teacherDTO.getExperience() < 0 || teacherDTO.getExperience() > 50) {
+            validationMessages.add("Experience values must be between 0 and 50");
+        }
+        if (teacherDTO.getSalary() == null || teacherDTO.getSalary() < 0 || teacherDTO.getSalary() > 100000) {
+            validationMessages.add("Salary values must be between 0 and 100000");
+        }
+        if (email == null || !email.matches("^[\\w.-]+@[\\w.-]+\\.[a-z]{2,}$")) {
+            validationMessages.add("Invalid email address");
+        }
+
+        if (!validationMessages.isEmpty()) {
+            ErrorResponse response = ErrorResponse.badRequest("Validation failed", validationMessages);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        Optional<Teacher> isResult = teachers.stream().filter(t -> t.getId() == id).findFirst();
+
+        if (isResult.isEmpty()) {
+            ErrorResponse response = ErrorResponse.notFound("Teacher " + id + " does not exist");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        if (isResult.isPresent()) {
+            Teacher teacher = isResult.get();
+
+            if (teacherDTO.getFirstName() != null) {
+                teacher.setFirstName(teacherDTO.getFirstName().trim());
+            }
+            if (teacherDTO.getLastName() != null) {
+                teacher.setLastName(teacherDTO.getLastName().trim());
+            }
+            if (teacherDTO.getSubject() != null) {
+                teacher.setSubject(teacherDTO.getSubject().trim());
+            }
+            if (teacherDTO.getExperience() != null) {
+                teacher.setExperience(teacherDTO.getExperience());
+            }
+            if (teacherDTO.getSalary() != null) {
+                teacher.setSalary(teacherDTO.getSalary());
+            }
+            if (teacherDTO.getEmail() != null) {
+                teacher.setEmail(teacherDTO.getEmail().trim());
+            }
+            if (teacherDTO.isActive()) {
+                teacher.setActive(teacherDTO.isActive());
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(isResult.get());
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateTeacher (@PathVariable int id, @RequestBody TeacherDTO teacherDTO) {
+        List<String> validationMessages = new ArrayList<>();
+        if (id <= 0) {
+            validationMessages.add("id must be greater than 0");
+            ErrorResponse response = ErrorResponse.badRequest("Invalid id", validationMessages);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        Optional<Teacher> isResult = teachers.stream().filter(t -> t.getId() == id).findFirst();
+
+        if (isResult.isEmpty()) {
+            ErrorResponse response = ErrorResponse.notFound("Teacher " + id + " does not exist");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        String firstName = (teacherDTO.getFirstName() == null) ? null : teacherDTO.getFirstName().trim().toLowerCase();
+        String lastName = (teacherDTO.getLastName() == null) ? null : teacherDTO.getLastName().trim().toLowerCase();
+        String subject = (teacherDTO.getSubject() == null) ? null : teacherDTO.getSubject().trim().toLowerCase();
+        String email = (teacherDTO.getEmail() == null) ? null : teacherDTO.getEmail().trim().toLowerCase();
+
+
+        if (firstName == null || firstName.isBlank()) {
+            validationMessages.add("First name is required");
+        }
+        if (firstName.length() < 2 || firstName.length() > 50){
+            validationMessages.add("First name must be between 2 and 50 characters");
+        }
+        if (lastName == null || lastName.isBlank()) {
+            validationMessages.add("Last name is required");
+        }
+        if (lastName.length() < 2 || lastName.length() > 50){
+            validationMessages.add("Last name must be between 2 and 50 characters");
+        }
+        if (subject == null || subject.isBlank()) {
+            validationMessages.add("Subject is required");
+        }
+        if (teacherDTO.getExperience() == null || teacherDTO.getExperience() < 0 || teacherDTO.getExperience() > 50) {
+            validationMessages.add("Experience values must be between 0 and 50");
+        }
+        if (teacherDTO.getSalary() == null || teacherDTO.getSalary() < 0 || teacherDTO.getSalary() > 100000) {
+            validationMessages.add("Salary values must be between 0 and 100000");
+        }
+        if (email == null || !email.matches("^[\\w.-]+@[\\w.-]+\\.[a-z]{2,}$")) {
+            validationMessages.add("Invalid email address");
+        }
+
+        if (!validationMessages.isEmpty()) {
+            ErrorResponse response = ErrorResponse.notFound("Teacher " + id + " does not exist");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        Teacher teacher = isResult.get();
+        teacher.setFirstName(firstName);
+        teacher.setLastName(lastName);
+        teacher.setSubject(subject);
+        teacher.setExperience(teacherDTO.getExperience());
+        teacher.setSalary(teacherDTO.getSalary());
+        teacher.setEmail(email);
+        teacher.setActive(teacherDTO.isActive());
+
+        return ResponseEntity.status(HttpStatus.OK).body(teacher);
+
+    }
 }
