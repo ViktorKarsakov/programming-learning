@@ -344,7 +344,7 @@ public class TeacherController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @PutMapping("/update-partial/{id}")
+    @PatchMapping("/update-partial/{id}")
     public ResponseEntity<?> partialUpdateTeacher(@PathVariable int id, @RequestBody TeacherDTO teacherDTO) {
         List<String> validationMessages = new ArrayList<>();
 
@@ -481,6 +481,56 @@ public class TeacherController {
         teacher.setActive(teacherDTO.isActive());
 
         return ResponseEntity.status(HttpStatus.OK).body(teacher);
+    }
 
+    @PatchMapping("/deactivate/{id}")
+    public ResponseEntity<?> deactivateTeacher (@PathVariable int id) {
+        List<String> validationMessages = new ArrayList<>();
+
+        if (id <= 0) {
+            validationMessages.add("id must be greater than 0");
+            ErrorResponse response = ErrorResponse.badRequest("Invalid id", validationMessages);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        Optional<Teacher> isResult =  teachers.stream().filter(t -> t.getId() == id).findFirst();
+        if (isResult.isEmpty()) {
+            ErrorResponse response = ErrorResponse.notFound("Teacher " + id + " does not exist");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        Teacher teacher = isResult.get();
+        if(!teacher.isActive()) {
+            validationMessages.add("Teacher " + id + " has been deactivated");
+            ErrorResponse response = ErrorResponse.badRequest("Validation failed", validationMessages);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        teacher.setActive(false);
+        return ResponseEntity.status(HttpStatus.OK).body(teacher);
+    }
+
+    @PatchMapping("/activate/{id}")
+    public ResponseEntity<?> activateTeacher (@PathVariable int id) {
+        List<String> validationMessages = new ArrayList<>();
+        if (id <= 0) {
+            validationMessages.add("id must be greater than 0");
+            ErrorResponse response = ErrorResponse.badRequest("Invalid id", validationMessages);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        Optional<Teacher> isResult = teachers.stream().filter(t -> t.getId() == id).findFirst();
+
+        if (isResult.isEmpty()) {
+            validationMessages.add("Teacher " + id + " has been activated");
+            ErrorResponse response = ErrorResponse.notFound("Teacher " + id + " does not exist");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+        Teacher teacher = isResult.get();
+        if(teacher.isActive()) {
+            validationMessages.add("Teacher " + id + " has been activated");
+            ErrorResponse response = ErrorResponse.badRequest("Validation failed", validationMessages);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        teacher.setActive(true);
+        return ResponseEntity.status(HttpStatus.OK).body(teacher);
     }
 }
