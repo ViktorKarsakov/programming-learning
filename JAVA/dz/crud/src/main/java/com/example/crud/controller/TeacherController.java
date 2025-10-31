@@ -253,7 +253,10 @@ public class TeacherController {
         newTeacher.setId(nextId++);
         teachers.add(newTeacher);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(newTeacher);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header("Location", "/api/teacher/add/" + newTeacher.getId())
+                .header("Message", "Teacher added Successfully")
+                .body(newTeacher);
 
     }
 
@@ -480,7 +483,10 @@ public class TeacherController {
         teacher.setEmail(email);
         teacher.setActive(teacherDTO.isActive());
 
-        return ResponseEntity.status(HttpStatus.OK).body(teacher);
+        return ResponseEntity.status(HttpStatus.OK)
+                .header("Location", "/api/teacher/update/" + id)
+                .header("Message", "Teacher updated Successfully")
+                .body(teacher);
     }
 
     @PatchMapping("/deactivate/{id}")
@@ -532,5 +538,102 @@ public class TeacherController {
         }
         teacher.setActive(true);
         return ResponseEntity.status(HttpStatus.OK).body(teacher);
+    }
+
+    @PatchMapping("/increase-salary/{id}")
+    public ResponseEntity<?> increaseSalary (@PathVariable int id, @RequestParam int percent) {
+        List<String> validationMessages = new ArrayList<>();
+        if (id <= 0) {
+            validationMessages.add("id must be greater than 0");
+            ErrorResponse response = ErrorResponse.badRequest("Invalid id", validationMessages);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        if (percent < 0 || percent > 100) {
+            validationMessages.add("percent must be between 0 and 100");
+            ErrorResponse response = ErrorResponse.badRequest("Invalid percent", validationMessages);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        Optional<Teacher> isResult = teachers.stream().filter(t -> t.getId() == id).findFirst();
+        if (isResult.isEmpty()) {
+            ErrorResponse response = ErrorResponse.notFound("Teacher " + id + " does not exist");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        Teacher teacher = isResult.get();
+        if (teacher.getSalary() + teacher.getSalary() * percent / 100 > 100000){
+            validationMessages.add("Salary percent must be between 0 and 100 000");
+            ErrorResponse response = ErrorResponse.badRequest("Invalid percent", validationMessages);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        teacher.setSalary(teacher.getSalary() + teacher.getSalary() * percent / 100.0);
+        return ResponseEntity.status(HttpStatus.OK).body(teacher);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteTeacher (@PathVariable int id) {
+        List<String> validationMessages = new ArrayList<>();
+        if (id <= 0) {
+            validationMessages.add("id must be greater than 0");
+            ErrorResponse response = ErrorResponse.badRequest("Invalid id", validationMessages);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        Optional<Teacher> isResult = teachers.stream().filter(t -> t.getId() == id).findFirst();
+
+
+        if (isResult.isEmpty()) {
+            ErrorResponse response = ErrorResponse.notFound("Teacher " + id + " does not exist");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        Teacher teacher = isResult.get();
+        teachers.remove(teacher);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/delete-by-subject/{subject}")
+    public ResponseEntity<?> deleteTeacherBySubject (@PathVariable String subject) {
+        List<String> validationMessages = new ArrayList<>();
+        int count = 0;
+
+        if (subject == null || subject.isBlank()) {
+            validationMessages.add("Subject is required");
+            ErrorResponse response = ErrorResponse.badRequest("Invalid subject", validationMessages);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        List<Teacher> foundTeacher = teachers.stream().filter(t -> t.getSubject().equalsIgnoreCase(subject)).toList();
+
+        if (foundTeacher.isEmpty()) {
+            ErrorResponse response = ErrorResponse.notFound("No teachers found for subject: " + subject);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        for (Teacher teacher : foundTeacher) {
+                teachers.remove(teacher);
+                count++;
+        }
+
+        Map<String, Integer> result = new HashMap<>();
+        result.put("count", count);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @DeleteMapping("/delete-inactive")
+    public ResponseEntity<?> deleteInactiveTeacher () {
+
+        int before = teachers.size();
+
+        teachers.removeIf(t -> !t.isActive());
+
+        int removed = before - teachers.size();
+
+        if (removed == 0) {
+            return ResponseEntity.noContent().build();
+        }
+
+        Map<String, Integer> result = new HashMap<>();
+        result.put("removed", removed);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }
