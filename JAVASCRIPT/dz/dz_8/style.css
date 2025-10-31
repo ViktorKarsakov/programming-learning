@@ -1,0 +1,49 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 30px;
+}
+
+.search-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  position: relative;
+  width: 400px;
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  font-size: 18px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.list {
+  position: absolute;
+  top: 44px;
+  left: 0;
+  width: 100%;
+  background: #222;
+  color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 10;
+}
+.list div {
+  padding: 8px 10px;
+  cursor: pointer;
+}
+.list div:hover {
+  background: #333;
+}/*# sourceMappingURL=style.css.map */
