@@ -17,7 +17,6 @@ import java.util.Map;
 @RequestMapping("/api/home")
 public class HomeController {
 
-    Map<String, MovieApiResponse> cacheData = new HashMap<>();
     SimpleCache cache = new SimpleCache(60 * 1000);
 
 
