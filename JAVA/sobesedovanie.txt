@@ -1,0 +1,368 @@
+200 вопросов по Java и Spring для собеседования
+JAVA CORE
+1. Основы Java и ООП (20 вопросов)  
+
+Что такое JVM, JRE и JDK? В чём разница?
+Объясните принципы ООП (инкапсуляция, наследование, полиморфизм, абстракция)
+В чём разница между абстрактным классом и интерфейсом?
+Что такое перегрузка (overloading) и переопределение (overriding) методов?
+Объясните модификаторы доступа в Java (private, protected, public, default)
+Что такое final, finally и finalize?
+В чём разница между статическими и нестатическими методами?
+Что такое static блок инициализации?
+Можно ли переопределить статический метод?
+Что такое varargs и как их использовать?
+Что такое полиморфизм времени компиляции и времени выполнения?
+Можно ли наследоваться от нескольких классов в Java?
+Что такое default методы в интерфейсах (Java 8+)?
+В чём разница между композицией и наследованием?
+Что такое package и зачем он нужен?
+Объясните принцип SOLID
+Что такое конструктор и его виды?
+Можно ли вызвать конструктор явно?
+Что такое this и super ключевые слова?
+Что такое inner class, static nested class, anonymous class?
+
+2. Типы данных и операторы (15 вопросов)
+
+В чём разница между примитивными типами и объектами-обёртками?
+Что такое autoboxing и unboxing?
+В чём разница между == и equals()?
+Что такое hashCode() и почему его нужно переопределять вместе с equals()?
+Объясните работу оператора instanceof
+Какие примитивные типы данных существуют в Java?
+Что такое приведение типов (casting)?
+В чём разница между явным и неявным приведением типов?
+Что такое wrapper классы и зачем они нужны?
+Что происходит при переполнении типа данных?
+В чём разница между float и double?
+Что такое литералы в Java?
+Объясните оператор тернарный условный (?:)
+Что такое bitwise операторы?
+В чём разница между & и && операторами?
+
+3. String и работа с текстом (15 вопросов)
+
+Почему String является immutable?
+В чём разница между String, StringBuilder и StringBuffer?
+Что такое String Pool?
+Как сравнивать строки правильно?
+Что делает метод intern() у String?
+Как создать String объект?
+В чём разница между созданием строки через new и литерал?
+Что такое StringTokenizer?
+Какие основные методы класса String вы знаете?
+Как конвертировать String в число и обратно?
+Что такое регулярные выражения (regex)?
+Как работает метод split()?
+В чём разница между substring() и subSequence()?
+Что такое CharSequence?
+Как эффективно конкатенировать строки в цикле?
+
+4. Коллекции (Collections Framework) (25 вопросов)
+
+Объясните иерархию Collection Framework
+В чём разница между Collection и Collections?
+В чём разница между ArrayList и LinkedList?
+В чём разница между HashMap и HashTable?
+Что такое ConcurrentHashMap и когда его использовать?
+В чём разница между Set и List?
+Как работает HashMap внутри?
+Что такое load factor и capacity в HashMap?
+В чём разница между Iterator и ListIterator?
+Что такое fail-fast и fail-safe итераторы?
+Как отсортировать коллекцию?
+Что такое Comparable и Comparator?
+В чём разница между HashSet и TreeSet?
+Что такое LinkedHashMap?
+Объясните PriorityQueue
+Что такое Vector и почему его редко используют?
+В чём разница между Queue и Deque?
+Что такое WeakHashMap?
+Как сделать коллекцию read-only?
+Что такое synchronizedList() и когда его использовать?
+В чём разница между ArrayList и CopyOnWriteArrayList?
+Что такое EnumSet и EnumMap?
+Как удалить элементы из списка во время итерации?
+Что делает метод forEach()?
+В чём разница между remove() у Iterator и Collection?
+
+5. Многопоточность (Multithreading) (25 вопросов)
+
+Что такое поток (thread) и процесс?
+Как создать поток в Java?
+В чём разница между implements Runnable и extends Thread?
+Что такое synchronized и где его применять?
+Объясните volatile ключевое слово
+Что такое deadlock и как его избежать?
+В чём разница между wait() и sleep()?
+Что такое Thread Pool и зачем он нужен?
+Объясните ExecutorService
+Что такое Future и CompletableFuture?
+Что такое race condition?
+Объясните методы notify() и notifyAll()
+Что такое ThreadLocal?
+В чём разница между Runnable и Callable?
+Что такое CountDownLatch?
+Объясните CyclicBarrier
+Что такое Semaphore?
+Что такое ReentrantLock?
+В чём разница между synchronized и ReentrantLock?
+Что такое atomic классы (AtomicInteger и т.д.)?
+Объясните Fork/Join Framework
+Что такое BlockingQueue?
+Какие состояния потока существуют?
+Что такое daemon поток?
+Как остановить поток правильно?
+
+6. Исключения (Exception Handling) (15 вопросов)
+
+В чём разница между checked и unchecked исключениями?
+Что такое try-with-resources?
+Можно ли поймать несколько исключений в одном catch блоке?
+В чём разница между throw и throws?
+Что такое finally блок и когда он не выполняется?
+Что такое Error и Exception?
+Можно ли поймать Error?
+Что такое NullPointerException и как его избежать?
+Объясните иерархию исключений в Java
+Можно ли переопределить метод и выбросить другое исключение?
+Что такое suppressed exceptions?
+Как создать собственное исключение?
+Что возвращает catch блок, если finally тоже возвращает значение?
+Что такое StackTrace?
+В чём разница между RuntimeException и другими исключениями?
+
+7. Stream API и Functional Programming (20 вопросов)
+
+Что такое lambda-выражения?
+Что такое функциональный интерфейс?
+Объясните Stream API
+В чём разница между map() и flatMap()?
+Что такое Optional и зачем он нужен?
+Какие основные функциональные интерфейсы существуют?
+В чём разница между Predicate, Function, Consumer и Supplier?
+Что такое method reference?
+В чём разница между intermediate и terminal операциями?
+Что делает метод filter()?
+Объясните методы reduce() и collect()
+Что такое Collectors?
+В чём разница между findFirst() и findAny()?
+Что делает метод peek()?
+Можно ли переиспользовать Stream?
+Что такое parallel stream?
+Когда использовать parallelStream()?
+Что такое lazy evaluation в Stream?
+Как отсортировать список с помощью Stream?
+Что такое groupingBy() в Collectors?
+
+8. Generics (10 вопросов)
+
+Что такое Generics и зачем они нужны?
+Что такое type erasure?
+В чём разница между <?>, <? extends T> и <? super T>?
+Можно ли создать generic массив?
+Что такое bounded type parameters?
+Можно ли использовать примитивы в Generic?
+Что такое raw type?
+Как работают generic методы?
+Можно ли создать generic enum?
+Что такое reifiable и non-reifiable типы?
+
+9. I/O и NIO (10 вопросов)
+
+В чём разница между InputStream и OutputStream?
+Что такое BufferedReader и BufferedWriter?
+В чём разница между FileReader и FileInputStream?
+Что такое serialization и deserialization?
+Что такое transient ключевое слово?
+В чём разница между IO и NIO?
+Что такое Path и Files классы?
+Как читать файл построчно?
+Что такое RandomAccessFile?
+Объясните try-with-resources для файлов
+
+10. Память и Garbage Collection (10 вопросов)
+
+Как работает Garbage Collection в Java?
+Что такое heap и stack память?
+Какие алгоритмы GC существуют?
+Что такое Strong, Soft, Weak и Phantom references?
+Что такое Memory Leak и как его обнаружить?
+Что делает метод finalize()?
+Что такое Metaspace?
+Объясните поколения памяти (Young, Old, Permanent Generation)
+Как настроить параметры heap memory?
+Что такое OutOfMemoryError?
+
+
+SPRING FRAMEWORK
+11. Spring Core и IoC/DI (25 вопросов)
+
+Что такое Spring Framework и его основные модули?
+Что такое IoC (Inversion of Control)?
+Что такое Dependency Injection и какие типы существуют?
+В чём разница между BeanFactory и ApplicationContext?
+Объясните жизненный цикл Spring Bean
+Какие scope у Spring Bean существуют?
+Что такое аннотация @Component и её специализации?
+В чём разница между @Component, @Service, @Repository и @Controller?
+Что такое @Autowired и как она работает?
+В чём разница между @Autowired, @Inject и @Resource?
+Что такое constructor injection, setter injection и field injection?
+Какой тип injection лучше использовать и почему?
+Что такое circular dependency и как его решить?
+Что делает аннотация @PostConstruct и @PreDestroy?
+Объясните ApplicationContext и его реализации
+Что такое BeanPostProcessor?
+Что такое BeanFactoryPostProcessor?
+В чём разница между BeanPostProcessor и BeanFactoryPostProcessor?
+Что такое InitializingBean и DisposableBean?
+Как инжектировать примитивные значения в bean?
+Что такое @DependsOn?
+Объясните aware интерфейсы (ApplicationContextAware и т.д.)
+Что такое FactoryBean?
+Как работает autowiring by name, type и constructor?
+Что происходит, если несколько bean'ов одного типа?
+
+12. Spring Configuration (15 вопросов)
+
+В чём разница между XML и Java конфигурацией?
+Что такое @Configuration и @Bean?
+Что делает аннотация @ComponentScan?
+Что такое @Value и как её использовать?
+Объясните @PropertySource
+Что такое Spring Profiles?
+Как работает @Conditional?
+Что такое @Primary и @Qualifier?
+Объясните @Lazy инициализацию
+Что такое SpEL (Spring Expression Language)?
+Как загрузить properties из внешнего файла?
+Что такое Environment в Spring?
+В чём разница между @Component и @Bean?
+Что такое @Import?
+Как использовать placeholder в properties (${...})?
+
+13. Spring Boot (20 вопросов)
+
+Что такое Spring Boot и его преимущества?
+Что делает @SpringBootApplication?
+Что такое Auto-configuration в Spring Boot?
+Как работает application.properties и application.yml?
+Что такое Spring Boot Starters?
+Объясните embedded сервер в Spring Boot
+Что такое Actuator и зачем он нужен?
+Как изменить порт приложения в Spring Boot?
+Что такое Spring Boot DevTools?
+Как создать executable JAR в Spring Boot?
+Что такое @EnableAutoConfiguration?
+Как отключить определённую auto-configuration?
+Что такое spring-boot-starter-parent?
+В чём разница между @SpringBootApplication и @EnableAutoConfiguration?
+Как настроить logging в Spring Boot?
+Что такое profiles в Spring Boot?
+Как запустить код при старте приложения?
+Что такое CommandLineRunner и ApplicationRunner?
+Как изменить конфигурацию embedded сервера?
+Что такое Spring Boot CLI?
+
+14. Spring MVC и REST API (25 вопросов)
+
+Что такое Spring MVC и как он работает?
+Объясните DispatcherServlet
+Что такое @RestController и чем отличается от @Controller?
+Что делают аннотации @GetMapping, @PostMapping и т.д.?
+Что такое @RequestBody и @ResponseBody?
+Объясните @PathVariable и @RequestParam
+Как работает обработка исключений в Spring (@ExceptionHandler)?
+Что такое @ControllerAdvice?
+Как валидировать данные в Spring (@Valid, @Validated)?
+Что такое Content Negotiation?
+Что такое HandlerMapping?
+Объясните ViewResolver
+Что такое ModelAndView?
+Как загрузить файл в Spring MVC?
+Что такое @CrossOrigin и зачем он нужен?
+Как вернуть разные HTTP статусы?
+Что такое ResponseEntity?
+Объясните @RequestHeader и @CookieValue
+Что такое interceptor в Spring MVC?
+В чём разница между interceptor и filter?
+Как сделать асинхронный контроллер?
+Что такое @ModelAttribute?
+Как обработать multipart request?
+Что такое RedirectAttributes?
+Как настроить CORS глобально?
+
+15. Spring Data JPA (25 вопросов)
+
+Что такое Spring Data JPA?
+Объясните аннотации @Entity, @Table, @Column
+Что такое @Id и стратегии генерации ID?
+В чём разница между @OneToOne, @OneToMany, @ManyToOne, @ManyToMany?
+Что такое CascadeType и FetchType?
+Как работают query methods в Spring Data JPA?
+Что такое @Query и JPQL?
+Объясните EntityManager
+Что такое транзакции и аннотация @Transactional?
+В чём разница между save() и saveAndFlush()?
+В чём разница между EAGER и LAZY loading?
+Что такое N+1 проблема и как её решить?
+Что такое @NamedQuery?
+В чём разница между JPQL и native query?
+Что такое Criteria API?
+Объясните аннотацию @Modifying
+Что такое Specification в Spring Data JPA?
+Как сделать пагинацию в Spring Data JPA?
+Что такое Projections?
+В чём разница между findById() и getById()?
+Что такое EntityGraph?
+Объясните аннотацию @Embedded и @Embeddable
+Что такое @MappedSuperclass?
+Как работает кеширование в Hibernate?
+Что такое persistence context?
+
+16. Spring Security (15 вопросов)
+
+Что такое Spring Security?
+Что такое аутентификация и авторизация?
+Как настроить Spring Security?
+Что такое SecurityContext?
+Объясните UserDetailsService
+Что такое PasswordEncoder?
+Как работает JWT в Spring Security?
+Что такое @PreAuthorize и @PostAuthorize?
+Объясните метод configure(HttpSecurity http)
+Что такое CSRF защита?
+Как отключить security для определённых endpoints?
+Что такое SecurityFilterChain?
+Объясните OAuth2 в Spring Security
+Что такое @EnableWebSecurity?
+Как получить текущего пользователя?
+
+
+
+300 Вопросов
+
+Java Core (165 вопросов):
+
+Основы Java и ООП - 20 вопросов
+Типы данных и операторы - 15 вопросов
+String и работа с текстом - 15 вопросов
+Коллекции - 25 вопросов
+Многопоточность - 25 вопросов
+Исключения - 15 вопросов
+Stream API - 20 вопросов
+Generics - 10 вопросов
+I/O и NIO - 10 вопросов
+Память и GC - 10 вопросов
+
+Spring Framework (135 вопросов):
+
+Spring Core и IoC/DI - 25 вопросов
+Spring Configuration - 15 вопросов
+Spring Boot - 20 вопросов
+Spring MVC и REST - 25 вопросов
+Spring Data JPA - 25 вопросов
+Spring Security - 15 вопросов
+Spring AOP - 10 вопросов
