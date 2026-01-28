@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавление заболевания</title>
+    <link rel="stylesheet" href="patient-form.css">
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- ЛЕВОЕ БОКОВОЕ МЕНЮ -->
+    <aside class="sidebar">
+        <div class="sidebar-title">КВД</div>
+
+        <nav class="sidebar-nav">
+            <a class="active" href="patient-form.html">Ввод данных</a>
+            <a href="patients-search.html">Поиск пациентов</a>
+            <a href="#">РИН</a>
+            <a href="#">Справочники</a>
+            <a href="#">Настройки</a>
+        </nav>
+
+        <div class="sidebar-exit">Выход</div>
+    </aside>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <main class="container">
+
+        <section class="card">
+            <h2>Данные пациента</h2>
+
+            <div class="grid-3">
+                <div>
+                    <label for="fam">Фамилия</label>
+                    <input id="fam" type="text" autocomplete="family-name">
+                </div>
+
+                <div>
+                    <label for="name">Имя</label>
+                    <input id="name" type="text" autocomplete="given-name">
+                </div>
+
+                <div>
+                    <label for="oth">Отчество</label>
+                    <input id="oth" type="text">
+                </div>
+
+                <div>
+                    <label for="gender">Пол</label>
+                    <select id="gender">
+                        <option>Мужской</option>
+                        <option>Женский</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="birth">Дата рождения</label>
+                    <input id="birth" type="date">
+                </div>
+
+                <div>
+                    <label for="addr">Адрес</label>
+                    <input id="addr" type="text" autocomplete="street-address">
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Социальные данные</h2>
+
+            <div class="grid-3">
+                <div>
+                    <label for="citizenCategory">Категория проживания</label>
+                    <select id="citizenCategory"></select>
+                </div>
+
+                <div>
+                    <label for="citizenType">Тип населённого пункта</label>
+                    <select id="citizenType"></select>
+                </div>
+
+                <div>
+                    <label for="state">Район</label>
+                    <select id="state"></select>
+                </div>
+
+                <div>
+                    <label for="socialGroup">Социальная группа</label>
+                    <select id="socialGroup"></select>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Данные по заболеванию</h2>
+
+            <div class="grid-3">
+                <div>
+                    <label for="diag">Диагноз</label>
+                    <select id="diag"></select>
+                </div>
+
+                <div>
+                    <label for="diagDate">Дата диагноза</label>
+                    <input id="diagDate" type="date">
+                </div>
+
+                <div>
+                    <label for="doc">Врач</label>
+                    <select id="doc"></select>
+                </div>
+
+                <div>
+                    <label for="place">Место выявления</label>
+                    <select id="place"></select>
+                </div>
+
+                <div>
+                    <label for="profile">Профиль врача / койки</label>
+                    <select id="profile"></select>
+                </div>
+
+                <div>
+                    <label for="inspection">Осмотр</label>
+                    <select id="inspection"></select>
+                </div>
+
+                <div>
+                    <label for="transfer">Путь передачи</label>
+                    <select id="transfer"></select>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Лабораторные подтверждения</h2>
+
+            <div class="checkbox-grid">
+                <label class="cb"><input type="checkbox"><span>РМП</span></label>
+                <label class="cb"><input type="checkbox"><span>РПР</span></label>
+                <label class="cb"><input type="checkbox"><span>РПГА</span></label>
+                <label class="cb"><input type="checkbox"><span>ИФА</span></label>
+                <label class="cb"><input type="checkbox"><span>РИФ</span></label>
+                <label class="cb"><input type="checkbox"><span>Иммуноблот</span></label>
+                <label class="cb"><input type="checkbox"><span>ТПМ</span></label>
+                <label class="cb"><input type="checkbox"><span>ПЦР</span></label>
+            </div>
+        </section>
+
+        <div class="actions">
+            <button class="primary" type="button">Сохранить</button>
+            <button class="secondary" type="button">Отмена</button>
+        </div>
+
+    </main>
+</div>
+
+</body>
+</html>

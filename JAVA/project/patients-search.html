@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Поиск пациентов</title>
+    <link rel="stylesheet" href="patients-search.css">
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+        <div class="sidebar-title">КВД</div>
+
+        <nav class="sidebar-nav">
+            <a href="patient-form.html">Ввод данных</a>
+            <a href="patients-search.html" class="active">Поиск пациентов</a>
+            <a href="#">РИН</a>
+            <a href="#">Справочники</a>
+            <a href="#">Настройки</a>
+        </nav>
+
+        <div class="sidebar-exit">Выход</div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="content">
+
+        <h1>Поиск пациентов</h1>
+
+        <!-- ===== FILTERS ===== -->
+        <section class="card">
+            <h2>Фильтры</h2>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Фамилия</label>
+                    <input type="text">
+                </div>
+
+                <div class="form-group">
+                    <label>Имя</label>
+                    <input type="text">
+                </div>
+
+                <div class="form-group">
+                    <label>Отчество</label>
+                    <input type="text">
+                </div>
+
+                <div class="form-group">
+                    <label>Пол</label>
+                    <select>
+                        <option>Любой</option>
+                        <option>Мужской</option>
+                        <option>Женский</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Район</label>
+                    <select></select>
+                </div>
+
+                <div class="form-group">
+                    <label>Диагноз</label>
+                    <select></select>
+                </div>
+
+                <div class="form-group">
+                    <label>Возраст от</label>
+                    <input type="number">
+                </div>
+
+                <div class="form-group">
+                    <label>Возраст до</label>
+                    <input type="number">
+                </div>
+
+                <div class="form-group">
+                    <label>Дата учета от</label>
+                    <input type="date">
+                </div>
+
+                <div class="form-group">
+                    <label>Дата учета до</label>
+                    <input type="date">
+                </div>
+
+            </div>
+
+            <div class="actions">
+                <button class="btn primary">Поиск</button>
+                <button class="btn">Сбросить</button>
+            </div>
+        </section>
+
+        <!-- ===== TABLE ===== -->
+        <section class="card">
+            <h2>Результаты</h2>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Фамилия</th>
+                    <th>Имя</th>
+                    <th>Отчество</th>
+                    <th>Пол</th>
+                    <th>Дата рождения</th>
+                    <th>Район</th>
+                    <th>Диагноз</th>
+                    <th>Дата диагноза</th>
+                    <th>Врач</th>
+                    <th>Дата учета</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- данные -->
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>

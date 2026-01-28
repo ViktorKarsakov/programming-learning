@@ -1,0 +1,191 @@
+* {
+    box-sizing: border-box;
+    font-family: Inter, system-ui, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #f4f6f8;
+    color: #1f2937;
+}
+
+/* ===== LAYOUT ===== */
+.layout {
+    display: flex;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 240px;
+    height: 100vh;
+    background: #0f172a;
+    color: #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 16px;
+}
+
+.sidebar-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 32px;
+    color: #ffffff;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sidebar-nav a {
+    text-decoration: none;
+    color: #cbd5f5;
+    font-size: 14px;
+    padding: 10px 12px;
+    border-radius: 8px;
+}
+
+.sidebar-nav a:hover {
+    background: #1e293b;
+    color: #ffffff;
+}
+
+.sidebar-nav a.active {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.sidebar-exit {
+    margin-top: auto;
+    font-size: 14px;
+    color: #f87171;
+    cursor: pointer;
+    padding: 10px 12px;
+    border-radius: 8px;
+}
+
+.sidebar-exit:hover {
+    background: #1e293b;
+}
+
+/* ===== CONTENT (КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ) ===== */
+.container {
+    width: calc(100% - 240px);   /* свободная область */
+    max-width: 1200px;
+    margin: 24px auto;           /* центрируем */
+    /*margin-left: 400px;*/          /* отступ от меню */
+    padding: 0 16px;
+}
+
+/* ===== CARD ===== */
+.card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.card h2 {
+    margin-top: 0;
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+/* ===== GRID ===== */
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+label {
+    font-size: 13px;
+    margin-bottom: 4px;
+    display: block;
+    color: #374151;
+}
+
+input, select {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    background: #fff;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+/* ===== CHECKBOX GRID ===== */
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(160px, 1fr));
+    gap: 12px 16px;
+}
+
+.checkbox-grid .cb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 14px;
+    color: #111827;
+    cursor: pointer;
+}
+
+.checkbox-grid .cb input {
+    margin: 0;
+    width: 16px;
+    height: 16px;
+}
+
+/* ===== ACTIONS ===== */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+}
+
+button.primary {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+button.secondary {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+/* ===== ADAPTIVE ===== */
+@media (max-width: 900px) {
+    .grid-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .checkbox-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 520px) {
+    .checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+}
