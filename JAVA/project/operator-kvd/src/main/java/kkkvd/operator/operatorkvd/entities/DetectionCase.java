@@ -26,16 +26,20 @@ public class DetectionCase {
     private Doctor doctor;
 
     @ManyToOne
-    @JoinColumn(name = "department_id", nullable = false)
-    private Department department;
+    @JoinColumn(name = "place_id", nullable = false)
+    private Place place;
 
     @ManyToOne
-    @JoinColumn(name = "branch_id", nullable = false)
-    private Branch branch;
+    @JoinColumn(name = "profile_id", nullable = false)
+    private Profile profile;
 
     @ManyToOne
-    @JoinColumn(name = "laboratory_test_id")
-    private LaboratoryTestType laboratoryTestType;
+    @JoinColumn(name = "inspection_id",  nullable = false)
+    private Inspection inspection;
+
+    @ManyToOne
+    @JoinColumn(name = "transfer_id", nullable = false)
+    private Transfer transfer;
 
     @Column(name = "detection_date", nullable = false)
     private LocalDate detectionDate;

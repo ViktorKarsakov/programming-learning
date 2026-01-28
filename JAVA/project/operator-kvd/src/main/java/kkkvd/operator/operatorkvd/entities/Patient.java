@@ -37,6 +37,19 @@ public class Patient {
     private Gender gender;
 
     @ManyToOne
-    @JoinColumn(name = "district_id", nullable = false)
-    private District district;
+    @JoinColumn(name = "citizen_category_id", nullable = false)
+    private CitizenCategory citizenCategory;
+
+    @ManyToOne
+    @JoinColumn(name = "citizen_type_id", nullable = false)
+    private CitizenType citizenType;
+
+    @ManyToOne
+    @JoinColumn(name = "state_id", nullable = false)
+    private State state;
+
+    @ManyToOne
+    @JoinColumn(name = "social_group_id", nullable = false)
+    private SocialGroup socialGroup;
+
 }
