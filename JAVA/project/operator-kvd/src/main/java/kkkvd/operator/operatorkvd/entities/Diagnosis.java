@@ -18,7 +18,7 @@ public class Diagnosis {
     @Column(name = "name", nullable = false, length = 150)
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "diagnosis_group_id", nullable = false)
     private DiagnosisGroup diagnosisGroup;
 }

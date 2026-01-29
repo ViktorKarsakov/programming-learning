@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "laboratory_test_type")
+@Table(name = "laboratory_test_types")
 @Getter
 @Setter
 @NoArgsConstructor

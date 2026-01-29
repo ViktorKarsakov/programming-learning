@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "state_group")
+@Table(name = "state_groups")
 @Getter
 @Setter
 @NoArgsConstructor

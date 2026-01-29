@@ -24,7 +24,7 @@ public class Doctor {
     @Column(name = "last_name",  nullable = false, length = 100)
     private String lastName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
 }

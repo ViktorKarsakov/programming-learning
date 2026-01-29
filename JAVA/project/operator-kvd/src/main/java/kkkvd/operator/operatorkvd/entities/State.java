@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "state")
+@Table(name = "states")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,7 +18,7 @@ public class State {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "state_group_id",  nullable = false)
     private StateGroup stateGroup;
 }

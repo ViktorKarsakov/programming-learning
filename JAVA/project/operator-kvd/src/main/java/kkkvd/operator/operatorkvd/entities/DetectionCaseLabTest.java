@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "detection_case_lab_test")
+@Table(name = "detection_case_lab_tests")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,11 +15,11 @@ public class DetectionCaseLabTest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "detection_case_id", nullable = false)
     private DetectionCase detectionCase;
 
-    @ManyToOne
-    @JoinColumn(name = "laboratory_test_type_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lab_test_type_id", nullable = false)
     private LaboratoryTestType laboratoryTestType;
 }
