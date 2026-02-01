@@ -25,6 +25,18 @@ public interface PatientRepository extends JpaRepository<Patient, Long> , JpaSpe
             @Param("firstName") String firstName,
             @Param("middleName") String middleName);
 
+    @Query("SELECT p FROM Patient p WHERE " +
+            "p.lastName = :lastName AND " +
+            "p.firstName = :firstName AND " +
+            "p.birthDate = :birthDate AND " +
+            "(p.middleName = :middleName OR (p.middleName IS NULL AND :middleName IS NULL))")
+    Optional<Patient> findByFullNameAndBirthDate(
+            @Param("lastName") String lastName,
+            @Param("firstName") String firstName,
+            @Param("middleName") String middleName,
+            @Param("birthDate") LocalDate birthDate
+    );
+
     boolean existsByLastNameAndFirstNameAndMiddleNameAndBirthDate(
             String lastName, String firstName, String middleName, LocalDate birthDate);
 }

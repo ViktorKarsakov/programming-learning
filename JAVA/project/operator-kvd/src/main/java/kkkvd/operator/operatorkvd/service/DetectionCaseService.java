@@ -3,6 +3,7 @@ package kkkvd.operator.operatorkvd.service;
 import kkkvd.operator.operatorkvd.dto.CreateDetectionCaseRequest;
 import kkkvd.operator.operatorkvd.entities.DetectionCase;
 import kkkvd.operator.operatorkvd.entities.DetectionCaseLabTest;
+import kkkvd.operator.operatorkvd.entities.LaboratoryTestType;
 import kkkvd.operator.operatorkvd.entities.Patient;
 import kkkvd.operator.operatorkvd.repositories.*;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -74,24 +77,31 @@ public class DetectionCaseService {
 
         detectionCase.setIsContact(request.getIsContact() != null ? request.getIsContact() : false);
 
-        detectionCase = detectionCaseRepository.save(detectionCase);
+        DetectionCase savedCase = detectionCaseRepository.save(detectionCase);
 
         if (request.getLabTestIds() != null && !request.getLabTestIds().isEmpty()) {
-            for (Long labTestId : request.getLabTestIds()) {
-                DetectionCaseLabTest labTest = new DetectionCaseLabTest();
-                labTest.setDetectionCase(detectionCase);
-                labTest.setLaboratoryTestType(laboratoryTestTypeRepository.findById(labTestId)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Тип теста не найден")));
-                detectionCaseLabTestRepository.save(labTest);
-            }
+            Set<Long> uniqueTests = new HashSet<>(request.getLabTestIds());
+            List<LaboratoryTestType> types = laboratoryTestTypeRepository.findAllById(uniqueTests);
+
+            List<DetectionCaseLabTest> labTests = types.stream()
+                    .map(type -> {
+                        DetectionCaseLabTest labTest = new DetectionCaseLabTest();
+                        labTest.setDetectionCase(savedCase);
+                        labTest.setLaboratoryTestType(type);
+                        return labTest;
+                    })
+                    .toList();
+
+            detectionCaseLabTestRepository.saveAll(labTests);
+
         }
 
-        return detectionCase;
+        return savedCase;
     }
 
     private Patient findOrCreatePatient(CreateDetectionCaseRequest request) {
         return patientRepository
-                .findByLastNameAndFirstNameAndMiddleNameAndBirthDate(
+                .findByFullNameAndBirthDate(
                         request.getLastName(),
                         request.getFirstName(),
                         request.getMiddleName(),
