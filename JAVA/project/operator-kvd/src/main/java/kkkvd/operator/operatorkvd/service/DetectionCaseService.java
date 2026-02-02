@@ -1,12 +1,15 @@
 package kkkvd.operator.operatorkvd.service;
 
 import kkkvd.operator.operatorkvd.dto.CreateDetectionCaseRequest;
-import kkkvd.operator.operatorkvd.entities.DetectionCase;
-import kkkvd.operator.operatorkvd.entities.DetectionCaseLabTest;
-import kkkvd.operator.operatorkvd.entities.LaboratoryTestType;
-import kkkvd.operator.operatorkvd.entities.Patient;
+import kkkvd.operator.operatorkvd.dto.PatientSearchRequest;
+import kkkvd.operator.operatorkvd.dto.PatientSearchResult;
+import kkkvd.operator.operatorkvd.entities.*;
 import kkkvd.operator.operatorkvd.repositories.*;
+import kkkvd.operator.operatorkvd.specification.DetectionCaseSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,18 +103,24 @@ public class DetectionCaseService {
     }
 
     private Patient findOrCreatePatient(CreateDetectionCaseRequest request) {
+        String middle = request.getMiddleName();
+        if (middle != null && middle.isBlank()){
+            middle = null;
+        }
+        String finalMiddleName = middle;
+
         return patientRepository
                 .findByFullNameAndBirthDate(
                         request.getLastName(),
                         request.getFirstName(),
-                        request.getMiddleName(),
+                        finalMiddleName,
                         request.getBirthDate()
                 )
                 .orElseGet(() -> {
                     Patient patient = new Patient();
                     patient.setLastName(request.getLastName());
                     patient.setFirstName(request.getFirstName());
-                    patient.setMiddleName(request.getMiddleName());
+                    patient.setMiddleName(finalMiddleName);
                     patient.setBirthDate(request.getBirthDate());
                     patient.setAddress(request.getAddress());
                     patient.setGender(genderRepository.findById(request.getGenderId())
@@ -122,5 +131,43 @@ public class DetectionCaseService {
 
     public List<DetectionCase> getByPatientId(Long patientId) {
         return detectionCaseRepository.findByPatientId(patientId);
+    }
+
+    public Page<PatientSearchResult> search(PatientSearchRequest request) {
+        Pageable  pageable = PageRequest.of(
+                request.getPage() != null ? request.getPage() : 0,
+                request.getSize() != null ? request.getSize() : 20
+        );
+
+        Page<DetectionCase> cases = detectionCaseRepository.findAll(DetectionCaseSpecification.withFilters(request), pageable);
+
+        return cases.map(this::toSearchResult);
+    }
+
+    private PatientSearchResult toSearchResult(DetectionCase dc) {
+        Patient patient = dc.getPatient();
+        return PatientSearchResult.builder()
+                .patientId(patient.getId())
+                .detectionCaseId(dc.getId())
+                .lastName(patient.getLastName())
+                .firstName(patient.getFirstName())
+                .middleName(patient.getMiddleName())
+                .genderName(patient.getGender().getName())
+                .birthDate(patient.getBirthDate())
+                .stateName(dc.getState().getName())
+                .diagnosisName(dc.getDiagnosis().getName())
+                .diagnosisDate(dc.getDiagnosisDate())
+                .doctorName(formatDoctorName(dc.getDoctor()))
+                .createdAt(dc.getCreatedAt())
+                .build();
+    }
+
+    private String formatDoctorName(Doctor doctor) {
+        StringBuilder sb = new StringBuilder(doctor.getLastName());
+        sb.append(" ").append( doctor.getFirstName().charAt(0)).append(".");
+        if (doctor.getMiddleName() != null && !doctor.getMiddleName().isEmpty()) {
+            sb.append(doctor.getMiddleName().charAt(0)).append(".");
+        }
+        return sb.toString();
     }
 }

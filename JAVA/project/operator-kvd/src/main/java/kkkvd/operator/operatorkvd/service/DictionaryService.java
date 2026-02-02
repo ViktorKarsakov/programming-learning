@@ -91,4 +91,70 @@ public class DictionaryService {
     public List<LaboratoryTestType> getAllLaboratoryTestTypes() {
         return laboratoryTestTypeRepository.findAll();
     }
+
+    //created
+
+    public Gender createGender(Gender gender) {
+        return genderRepository.save(gender);
+    }
+
+    public Diagnosis createDiagnosis(Diagnosis diagnosis) {
+        return diagnosisRepository.save(diagnosis);
+    }
+
+    public DiagnosisGroup createDiagnosisGroup(DiagnosisGroup diagnosisGroup) {
+        return diagnosisGroupRepository.save(diagnosisGroup);
+    }
+
+    public Doctor createDoctor(Doctor doctor) {
+        return doctorRepository.save(doctor);
+    }
+
+    public State createState(State state) {
+        return stateRepository.save(state);
+    }
+
+    public StateGroup createStateGroup(StateGroup stateGroup) {
+        return stateGroupRepository.save(stateGroup);
+    }
+
+    public Place createPlace(Place place) {
+        return placeRepository.save(place);
+    }
+
+    public Profile createProfile(Profile profile) {
+        return profileRepository.save(profile);
+    }
+
+    public Inspection createInspection(Inspection inspection) {
+        return inspectionRepository.save(inspection);
+    }
+
+    public Transfer createTransfer(Transfer transfer) {
+        return transferRepository.save(transfer);
+    }
+
+    public CitizenCategory createCitizenCategory(CitizenCategory citizenCategory) {
+        return citizenCategoryRepository.save(citizenCategory);
+    }
+
+    public CitizenType createCitizenType(CitizenType citizenType) {
+        return citizenTypeRepository.save(citizenType);
+    }
+
+    public SocialGroup createSocialGroup(SocialGroup socialGroup) {
+        return socialGroupRepository.save(socialGroup);
+    }
+
+    public LaboratoryTestType createLaboratoryTestType(LaboratoryTestType labTestType) {
+        return laboratoryTestTypeRepository.save(labTestType);
+    }
+
+    public Branch createBranch(Branch branch) {
+        return branchRepository.save(branch);
+    }
+
+    public Department createDepartment(Department department) {
+        return departmentRepository.save(department);
+    }
 }
