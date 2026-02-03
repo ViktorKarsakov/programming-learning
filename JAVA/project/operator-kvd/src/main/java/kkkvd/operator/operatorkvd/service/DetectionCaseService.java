@@ -1,6 +1,7 @@
 package kkkvd.operator.operatorkvd.service;
 
 import kkkvd.operator.operatorkvd.dto.CreateDetectionCaseRequest;
+import kkkvd.operator.operatorkvd.dto.DetectionCaseResponse;
 import kkkvd.operator.operatorkvd.dto.PatientSearchRequest;
 import kkkvd.operator.operatorkvd.dto.PatientSearchResult;
 import kkkvd.operator.operatorkvd.entities.*;
@@ -152,12 +153,12 @@ public class DetectionCaseService {
                 .lastName(patient.getLastName())
                 .firstName(patient.getFirstName())
                 .middleName(patient.getMiddleName())
-                .genderName(patient.getGender().getName())
+                .genderName(patient.getGender() != null ? patient.getGender().getName() : null)
                 .birthDate(patient.getBirthDate())
-                .stateName(dc.getState().getName())
-                .diagnosisName(dc.getDiagnosis().getName())
+                .stateName(dc.getState() != null ? dc.getState().getName() : null)
+                .diagnosisName(dc.getDiagnosis() != null ? dc.getDiagnosis().getName() : null)
                 .diagnosisDate(dc.getDiagnosisDate())
-                .doctorName(formatDoctorName(dc.getDoctor()))
+                .doctorName(dc.getDoctor() != null ? formatDoctorName(dc.getDoctor()) : null)
                 .createdAt(dc.getCreatedAt())
                 .build();
     }
@@ -169,5 +170,35 @@ public class DetectionCaseService {
             sb.append(doctor.getMiddleName().charAt(0)).append(".");
         }
         return sb.toString();
+    }
+
+    public DetectionCaseResponse toResponse(DetectionCase detectionCase) {
+        Patient patient = detectionCase.getPatient();
+
+        return DetectionCaseResponse.builder()
+                .id(detectionCase.getId())
+                .patientId(patient != null ? patient.getId() : null)
+                .patientFullName(buildFullName(patient))
+                .diagnosisName(detectionCase.getDiagnosis() != null ? detectionCase.getDiagnosis().getName() : null)
+                .diagnosisDate(detectionCase.getDiagnosisDate())
+                .createdAt(detectionCase.getCreatedAt())
+                .build();
+    }
+
+    private String buildFullName(Patient patient) {
+        if (patient == null) {
+            return null;
+        }
+
+        String last = safe(patient.getLastName());
+        String first = safe(patient.getFirstName());
+        String middle = safe(patient.getMiddleName());
+
+        String full = (last + " " +  first + " " + middle).trim();
+        return full.replaceAll("\\s+", " ");
+    }
+
+    private String safe(String s) {
+        return s == null ? "" : s.trim();
     }
 }

@@ -29,12 +29,12 @@ public class DictionaryController {
 
     //Diagnosis
 
-    @GetMapping("/diagnosis")
+    @GetMapping("/diagnoses")
     public ResponseEntity<List<Diagnosis>> getDiagnosis() {
         return ResponseEntity.ok(dictionaryService.getAllDiagnoses());
     }
 
-    @PostMapping("/diagnosis")
+    @PostMapping("/diagnoses")
     public ResponseEntity<Diagnosis> createDiagnosis(@RequestBody Diagnosis diagnosis) {
         return ResponseEntity.status(HttpStatus.CREATED).body(dictionaryService.createDiagnosis(diagnosis));
     }
@@ -185,12 +185,12 @@ public class DictionaryController {
 
     // Branch
 
-    @GetMapping("/branch")
+    @GetMapping("/branches")
     public ResponseEntity<List<Branch>> getBranches() {
         return ResponseEntity.ok(dictionaryService.getAllBranches());
     }
 
-    @PostMapping("/branch")
+    @PostMapping("/branches")
     public ResponseEntity<Branch> createBranch(@RequestBody Branch branch) {
         return ResponseEntity.status(HttpStatus.CREATED).body(dictionaryService.createBranch(branch));
     }

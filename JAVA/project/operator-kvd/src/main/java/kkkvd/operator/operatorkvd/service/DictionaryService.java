@@ -3,7 +3,10 @@ package kkkvd.operator.operatorkvd.service;
 import kkkvd.operator.operatorkvd.entities.*;
 import kkkvd.operator.operatorkvd.repositories.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -157,4 +160,92 @@ public class DictionaryService {
     public Department createDepartment(Department department) {
         return departmentRepository.save(department);
     }
+
+    @Transactional
+    public Gender updateGender(Long id, Gender gender) {
+        Gender existing = genderRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пол не найден"));
+        existing.setName(gender.getName());
+        return genderRepository.save(existing);
+    }
+
+    @Transactional
+    public DiagnosisGroup updateDiagnosisGroup(Long id, DiagnosisGroup diagnosisGroup) {
+        DiagnosisGroup existing = diagnosisGroupRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Группа диагнозов не найдена"));
+        existing.setName(diagnosisGroup.getName());
+        return diagnosisGroupRepository.save(existing);
+    }
+
+    @Transactional
+    public Diagnosis updateDiagnosis(Long id, Diagnosis diagnosis) {
+        Diagnosis existing = diagnosisRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Диагноз не найден"));
+        existing.setName(diagnosis.getName());
+        existing.setDiagnosisGroup(diagnosis.getDiagnosisGroup());
+        return diagnosisRepository.save(existing);
+    }
+
+    @Transactional
+    public Branch updateBranch(Long id, Branch branch) {
+        Branch existing = branchRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Филиал не найден"));
+        existing.setName(branch.getName());
+        return branchRepository.save(existing);
+    }
+
+    @Transactional
+    public Department updateDepartment(Long id, Department department) {
+        Department existing = departmentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Отделение не найдено"));
+        existing.setName(department.getName());
+        existing.setBranch(department.getBranch());
+        return departmentRepository.save(existing);
+    }
+
+    @Transactional
+    public Doctor updateDoctor(Long id, Doctor doctor) {
+        Doctor existing = doctorRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Врач не найден"));
+        existing.setLastName(doctor.getLastName());
+        existing.setFirstName(doctor.getFirstName());
+        existing.setMiddleName(doctor.getMiddleName());
+        existing.setDepartment(doctor.getDepartment());
+        return doctorRepository.save(existing);
+    }
+
+    @Transactional
+    public StateGroup updateStateGroup(Long id, StateGroup stateGroup) {
+        StateGroup existing = stateGroupRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Группа районов не найдена"));
+        existing.setName(stateGroup.getName());
+        return stateGroupRepository.save(existing);
+    }
+
+    @Transactional
+    public State updateState(Long id, State state) {
+        State existing = stateRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Район не найден"));
+        existing.setName(state.getName());
+        existing.setStateGroup(state.getStateGroup());
+        return stateRepository.save(existing);
+    }
+
+    @Transactional
+    public Place updatePlace(Long id, Place place) {
+        Place existing = placeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Место выявления не найдено"));
+        existing.setName(place.getName());
+        return placeRepository.save(existing);
+    }
+
+    @Transactional
+    public Profile updateProfile(Long id, Profile profile) {
+        Profile existing = profileRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Профиль не найден"));
+        existing.setName(profile.getName());
+        return profileRepository.save(existing);
+    }
+
+    //TODO: Доделать остальные update'ы и сделать delete
 }
