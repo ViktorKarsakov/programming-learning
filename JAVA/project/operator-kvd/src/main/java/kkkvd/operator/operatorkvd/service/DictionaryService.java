@@ -247,5 +247,180 @@ public class DictionaryService {
         return profileRepository.save(existing);
     }
 
-    //TODO: Доделать остальные update'ы и сделать delete
+    @Transactional
+    public Inspection updateInspection(Long id, Inspection inspection) {
+        Inspection existing = inspectionRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Тип осмотра не найден"));
+        existing.setName(inspection.getName());
+        return inspectionRepository.save(existing);
+    }
+
+    @Transactional
+    public Transfer updateTransfer(Long id, Transfer transfer) {
+        Transfer existing = transferRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Путь передачи не найден"));
+        existing.setName(transfer.getName());
+        return transferRepository.save(existing);
+    }
+
+    @Transactional
+    public CitizenCategory updateCitizenCategory(Long id, CitizenCategory citizenCategory) {
+        CitizenCategory existing = citizenCategoryRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Категория проживания не найдена"));
+        existing.setName(citizenCategory.getName());
+        return citizenCategoryRepository.save(existing);
+    }
+
+    @Transactional
+    public CitizenType updateCitizenType(Long id, CitizenType citizenType) {
+        CitizenType existing = citizenTypeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Тип населённого пункта не найден"));
+        existing.setName(citizenType.getName());
+        return citizenTypeRepository.save(existing);
+    }
+
+    @Transactional
+    public SocialGroup updateSocialGroup(Long id, SocialGroup socialGroup) {
+        SocialGroup existing = socialGroupRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Социальная группа не найдена"));
+        existing.setName(socialGroup.getName());
+        return socialGroupRepository.save(existing);
+    }
+
+    @Transactional
+    public LaboratoryTestType updateLaboratoryTestType(Long id, LaboratoryTestType labTestType) {
+        LaboratoryTestType existing = laboratoryTestTypeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Тип лаб. теста не найден"));
+        existing.setName(labTestType.getName());
+        return laboratoryTestTypeRepository.save(existing);
+    }
+
+
+    @Transactional
+    public void deleteGender(Long id) {
+        if (!genderRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пол не найден");
+        }
+        genderRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteDiagnosisGroup(Long id) {
+        if (!diagnosisGroupRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Группа диагнозов не найдена");
+        }
+        diagnosisGroupRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteDiagnosis(Long id) {
+        if (!diagnosisRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Диагноз не найден");
+        }
+        diagnosisRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteBranch(Long id) {
+        if (!branchRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Филиал не найден");
+        }
+        branchRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteDepartment(Long id) {
+        if (!departmentRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Отделение не найдено");
+        }
+        departmentRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteDoctor(Long id) {
+        if (!doctorRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Врач не найден");
+        }
+        doctorRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteStateGroup(Long id) {
+        if (!stateGroupRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Группа районов не найдена");
+        }
+        stateGroupRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteState(Long id) {
+        if (!stateRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Район не найден");
+        }
+        stateRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deletePlace(Long id) {
+        if (!placeRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Место выявления не найдено");
+        }
+        placeRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteProfile(Long id) {
+        if (!profileRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Профиль не найден");
+        }
+        profileRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteInspection(Long id) {
+        if (!inspectionRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Тип осмотра не найден");
+        }
+        inspectionRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteTransfer(Long id) {
+        if (!transferRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Путь передачи не найден");
+        }
+        transferRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteCitizenCategory(Long id) {
+        if (!citizenCategoryRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Категория проживания не найдена");
+        }
+        citizenCategoryRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteCitizenType(Long id) {
+        if (!citizenTypeRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Тип населённого пункта не найден");
+        }
+        citizenTypeRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteSocialGroup(Long id) {
+        if (!socialGroupRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Социальная группа не найдена");
+        }
+        socialGroupRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteLaboratoryTestType(Long id) {
+        if (!laboratoryTestTypeRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Тип лаб. теста не найден");
+        }
+        laboratoryTestTypeRepository.deleteById(id);
+    }
 }

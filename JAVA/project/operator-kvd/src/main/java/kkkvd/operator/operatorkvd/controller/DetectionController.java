@@ -18,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/detection-cases")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class DetectionController {
     private final DetectionCaseService detectionCaseService;
 

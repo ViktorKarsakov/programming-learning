@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Справочники - КВД</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-title">КВД</div>
+        <div class="sidebar-subtitle">Информационная система</div>
+
+        <nav class="sidebar-nav">
+            <a href="patient-form.html">
+                <span class="icon">📝</span> Ввод данных
+            </a>
+            <a href="patient-search.html">
+                <span class="icon">🔍</span> Поиск пациентов
+            </a>
+            <a href="#" class="submenu-toggle" onclick="toggleSubmenu(this)">
+                <span><span class="icon">📚</span> Справочники</span>
+            </a>
+            <div class="submenu">
+                <a href="dictionaries.html?dict=genders" data-dict="genders">Пол</a>
+                <a href="dictionaries.html?dict=diagnosis-groups" data-dict="diagnosis-groups">Группы диагнозов</a>
+                <a href="dictionaries.html?dict=diagnoses" data-dict="diagnoses">Диагнозы</a>
+                <a href="dictionaries.html?dict=branches" data-dict="branches">Филиалы</a>
+                <a href="dictionaries.html?dict=departments" data-dict="departments">Отделения</a>
+                <a href="dictionaries.html?dict=doctors" data-dict="doctors">Врачи</a>
+                <a href="dictionaries.html?dict=state-groups" data-dict="state-groups">Группы районов</a>
+                <a href="dictionaries.html?dict=states" data-dict="states">Районы</a>
+                <a href="dictionaries.html?dict=places" data-dict="places">Места выявления</a>
+                <a href="dictionaries.html?dict=profiles" data-dict="profiles">Профили</a>
+                <a href="dictionaries.html?dict=inspections" data-dict="inspections">Типы осмотра</a>
+                <a href="dictionaries.html?dict=transfers" data-dict="transfers">Пути передачи</a>
+                <a href="dictionaries.html?dict=citizen-categories" data-dict="citizen-categories">Категории проживания</a>
+                <a href="dictionaries.html?dict=citizen-types" data-dict="citizen-types">Типы нас. пунктов</a>
+                <a href="dictionaries.html?dict=social-groups" data-dict="social-groups">Соц. группы</a>
+                <a href="dictionaries.html?dict=lab-test-types" data-dict="lab-test-types">Лаб. тесты</a>
+            </div>
+            <a href="#">
+                <span class="icon">⚙️</span> Настройки
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-exit">
+                <span>🚪</span> Выход
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+        <div class="page-header">
+            <h1 class="page-title" id="pageTitle">Справочник: Пол</h1>
+        </div>
+
+        <section class="card">
+            <div class="actions">
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    ➕ Добавить
+                </button>
+                <button class="btn btn-secondary" id="btnEdit" onclick="openEditModal()" disabled>
+                    ✏️ Редактировать
+                </button>
+                <button class="btn btn-danger" id="btnDelete" onclick="deleteSelected()" disabled>
+                    🗑️ Удалить
+                </button>
+            </div>
+
+            <div class="table-container">
+                <table id="dictTable">
+                    <thead id="tableHead">
+                        <tr>
+                            <th style="width: 60px">#</th>
+                            <th>Название</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td colspan="2">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="dictModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="modalTitle">Добавить запись</h3>
+            <button class="modal-close" onclick="closeDictModal()">×</button>
+        </div>
+        <div class="modal-body" id="modalFormBody">
+            <!-- Форма генерируется динамически -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeDictModal()">Отмена</button>
+            <button class="btn btn-primary" onclick="saveDictRecord()">Сохранить</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/dictionaries.js"></script>
+
+<script>
+    // Загружаем справочник из URL параметра или по умолчанию
+    document.addEventListener('DOMContentLoaded', () => {
+        const params = new URLSearchParams(window.location.search);
+        const dict = params.get('dict') || 'genders';
+        loadDictionary(dict);
+    });
+</script>
+
+</body>
+</html>
