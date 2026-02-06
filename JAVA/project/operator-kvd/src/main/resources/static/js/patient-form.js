@@ -159,7 +159,15 @@ function validatePatientForm(data) {
     };
     
     for (const [field, label] of Object.entries(requiredFields)) {
-        if (!data[field] || (typeof data[field] === 'number' && isNaN(data[field]))) {
+        const value = data[field];
+        
+        // Проверяем на null/undefined/пустую строку
+        if (value == null || value === '') {
+            throw new Error(`Заполните поле "${label}"`);
+        }
+        
+        // Проверяем числа на NaN
+        if (typeof value === 'number' && Number.isNaN(value)) {
             throw new Error(`Заполните поле "${label}"`);
         }
     }

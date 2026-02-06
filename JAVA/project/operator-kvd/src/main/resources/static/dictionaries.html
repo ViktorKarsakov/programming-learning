@@ -119,9 +119,9 @@
 
 <script>
     // Загружаем справочник из URL параметра или по умолчанию
-    document.addEventListener('DOMContentLoaded', () => {
-        const params = new URLSearchParams(window.location.search);
-        const dict = params.get('dict') || 'genders';
+    document.addEventListener('DOMContentLoaded', function() {
+        var params = new URLSearchParams(window.location.search);
+        var dict = params.get('dict') || 'genders';
         loadDictionary(dict);
     });
 </script>

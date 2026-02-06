@@ -150,7 +150,7 @@ function clearForm(formId) {
 
 // ==================== SELECT UTILS ====================
 
-async function loadSelectOptions(selectId, endpoint, displayField = 'name', valueField = 'id') {
+async function loadSelectOptions(selectId, endpoint, displayField = 'name', valueField = 'id', emptyLabel = 'Выберите...') {
     const select = document.getElementById(selectId);
     if (!select) return;
 
@@ -161,7 +161,7 @@ async function loadSelectOptions(selectId, endpoint, displayField = 'name', valu
         const currentValue = select.value;
         
         // Очищаем и добавляем пустой option
-        select.innerHTML = '<option value="">Выберите...</option>';
+        select.innerHTML = `<option value="">${emptyLabel}</option>`;
         
         data.forEach(item => {
             const option = document.createElement('option');
@@ -176,7 +176,7 @@ async function loadSelectOptions(selectId, endpoint, displayField = 'name', valu
                 }
                 option.textContent = value || '';
             } else {
-                option.textContent = item[displayField];
+                option.textContent = item[displayField] || '';
             }
             
             select.appendChild(option);

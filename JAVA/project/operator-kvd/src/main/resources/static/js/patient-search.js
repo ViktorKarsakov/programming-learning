@@ -26,11 +26,11 @@ async function initSearchPage() {
 async function loadSearchFilters() {
     try {
         await Promise.all([
-            loadSelectOptions('filterGender', '/dictionaries/genders'),
-            loadSelectOptions('filterState', '/dictionaries/states'),
-            loadSelectOptions('filterDiagnosis', '/dictionaries/diagnoses'),
-            loadSelectOptions('filterDiagnosisGroup', '/dictionaries/diagnosis-groups'),
-            loadSelectOptions('filterSocialGroup', '/dictionaries/social-groups'),
+            loadSelectOptions('filterGender', '/dictionaries/genders', 'name', 'id', 'Любой'),
+            loadSelectOptions('filterState', '/dictionaries/states', 'name', 'id', 'Любой'),
+            loadSelectOptions('filterDiagnosis', '/dictionaries/diagnoses', 'name', 'id', 'Любой'),
+            loadSelectOptions('filterDiagnosisGroup', '/dictionaries/diagnosis-groups', 'name', 'id', 'Любая'),
+            loadSelectOptions('filterSocialGroup', '/dictionaries/social-groups', 'name', 'id', 'Любая'),
         ]);
         
         // Врачи загружаются отдельно (особый формат ФИО)
@@ -70,8 +70,13 @@ async function loadDoctorsSelectForSearch() {
     }
 }
 
-async function searchPatients() {
+async function searchPatients(resetPage = true) {
     try {
+        // При новом поиске сбрасываем на первую страницу
+        if (resetPage) {
+            currentPage = 0;
+        }
+        
         showLoading('searchResults');
         
         const filters = {
@@ -118,9 +123,9 @@ function getNumberValue(id) {
 
 function renderSearchResults() {
     const tbody = document.getElementById('searchResults');
-    
+
     if (!searchResults || searchResults.length === 0) {
-        showEmptyState('searchResults', 'Ничего не найдено. Попробуйте изменить фильтры.');
+        showTableEmptyState('searchResults', 'Пациенты не найдены');
         return;
     }
     
@@ -140,6 +145,20 @@ function renderSearchResults() {
     `).join('');
     
     updateActionButtons();
+}
+
+function showTableEmptyState(tbodyId, message) {
+    const tbody = document.getElementById(tbodyId);
+    tbody.innerHTML = `
+        <tr>
+            <td colspan="10">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📋</div>
+                    <p>${message}</p>
+                </div>
+            </td>
+        </tr>
+    `;
 }
 
 function selectSearchRow(row) {
@@ -172,23 +191,25 @@ function renderPagination(pageData) {
     const to = Math.min((currentPage + 1) * pageSize, totalElements);
     
     container.innerHTML = `
-        <div class="pagination-info">
-            Показано ${from} - ${to} из ${totalElements}
-        </div>
-        <div class="pagination-buttons">
-            <button class="btn btn-secondary btn-sm" onclick="goToPage(0)" ${currentPage === 0 ? 'disabled' : ''}>
-                ««
-            </button>
-            <button class="btn btn-secondary btn-sm" onclick="goToPage(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}>
-                «
-            </button>
-            <span style="padding: 6px 12px;">Страница ${currentPage + 1} из ${totalPages || 1}</span>
-            <button class="btn btn-secondary btn-sm" onclick="goToPage(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>
-                »
-            </button>
-            <button class="btn btn-secondary btn-sm" onclick="goToPage(${totalPages - 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>
-                »»
-            </button>
+        <div class="pagination">
+            <div class="pagination-info">
+                Показано ${from} - ${to} из ${totalElements}
+            </div>
+            <div class="pagination-buttons">
+                <button class="btn btn-secondary btn-sm" onclick="goToPage(0)" ${currentPage === 0 ? 'disabled' : ''}>
+                    ««
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="goToPage(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}>
+                    «
+                </button>
+                <span style="padding: 6px 12px;">Страница ${currentPage + 1} из ${totalPages || 1}</span>
+                <button class="btn btn-secondary btn-sm" onclick="goToPage(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>
+                    »
+                </button>
+                <button class="btn btn-secondary btn-sm" onclick="goToPage(${totalPages - 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>
+                    »»
+                </button>
+            </div>
         </div>
     `;
 }
@@ -196,7 +217,7 @@ function renderPagination(pageData) {
 function goToPage(page) {
     if (page < 0 || page >= totalPages) return;
     currentPage = page;
-    searchPatients();
+    searchPatients(false); // false = не сбрасывать страницу
 }
 
 function resetFilters() {
@@ -219,10 +240,21 @@ function resetFilters() {
     document.getElementById('createdFrom').value = firstDay.toISOString().split('T')[0];
     document.getElementById('createdTo').value = today.toISOString().split('T')[0];
     
-    // Очищаем результаты
+    // Очищаем результаты и показываем подсказку
     currentPage = 0;
     searchResults = [];
-    document.getElementById('searchResults').innerHTML = '';
+    totalPages = 0;
+    
+    document.getElementById('searchResults').innerHTML = `
+        <tr>
+            <td colspan="10">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔍</div>
+                    <p>Введите параметры поиска и нажмите "Поиск"</p>
+                </div>
+            </td>
+        </tr>
+    `;
     document.getElementById('pagination').innerHTML = '';
     
     showToast('Фильтры сброшены', 'info');
@@ -252,9 +284,10 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Поиск по Enter
-document.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && e.target.closest('.card')) {
+// Поиск по Enter только в блоке фильтров
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.closest('#filtersCard')) {
+        e.preventDefault();
         searchPatients();
     }
 });

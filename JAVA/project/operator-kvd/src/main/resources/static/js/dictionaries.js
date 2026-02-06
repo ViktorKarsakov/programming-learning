@@ -214,10 +214,10 @@ async function loadDictionary(dictKey) {
     selectedId = null;
     
     // Обновляем заголовок
-    document.getElementById('pageTitle').textContent = `Справочник: ${config.title}`;
+    document.getElementById('pageTitle').textContent = 'Справочник: ' + config.title;
     
     // Обновляем активный пункт меню
-    document.querySelectorAll('.submenu a').forEach(a => {
+    document.querySelectorAll('.submenu a').forEach(function(a) {
         a.classList.remove('active');
         if (a.dataset.dict === dictKey) {
             a.classList.add('active');
@@ -242,43 +242,51 @@ async function loadDictionary(dictKey) {
 
 function renderTableHeaders(columns) {
     const thead = document.getElementById('tableHead');
-    thead.innerHTML = `
-        <tr>
-            ${columns.map(col => `<th style="${col.width ? 'width:' + col.width : ''}">${col.label}</th>`).join('')}
-        </tr>
-    `;
+    let html = '<tr>';
+    columns.forEach(function(col) {
+        const style = col.width ? 'style="width:' + col.width + '"' : '';
+        html += '<th ' + style + '>' + col.label + '</th>';
+    });
+    html += '</tr>';
+    thead.innerHTML = html;
 }
 
 function renderTableData(columns) {
     const tbody = document.getElementById('tableBody');
     
     if (!currentData || currentData.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="${columns.length}">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📋</div>
-                        <p>Нет данных. Нажмите "Добавить" для создания записи.</p>
-                    </div>
-                </td>
-            </tr>
-        `;
+        tbody.innerHTML = '<tr><td colspan="' + columns.length + '">' +
+            '<div class="empty-state">' +
+            '<div class="empty-state-icon">📋</div>' +
+            '<p>Нет данных. Нажмите "Добавить" для создания записи.</p>' +
+            '</div></td></tr>';
         return;
     }
     
-    tbody.innerHTML = currentData.map(item => `
-        <tr data-id="${item.id}" onclick="selectDictRow(this)" ondblclick="openEditModal()">
-            ${columns.map(col => `<td>${getNestedValue(item, col.key) || ''}</td>`).join('')}
-        </tr>
-    `).join('');
+    let html = '';
+    currentData.forEach(function(item) {
+        html += '<tr data-id="' + item.id + '" onclick="selectDictRow(this)" ondblclick="openEditModal()">';
+        columns.forEach(function(col) {
+            const value = getNestedValue(item, col.key) || '';
+            html += '<td>' + value + '</td>';
+        });
+        html += '</tr>';
+    });
+    tbody.innerHTML = html;
 }
 
 function getNestedValue(obj, path) {
-    return path.split('.').reduce((current, key) => current?.[key], obj);
+    const keys = path.split('.');
+    let current = obj;
+    for (let i = 0; i < keys.length; i++) {
+        if (current == null) return null;
+        current = current[keys[i]];
+    }
+    return current;
 }
 
 function selectDictRow(row) {
-    document.querySelectorAll('#tableBody tr').forEach(tr => {
+    document.querySelectorAll('#tableBody tr').forEach(function(tr) {
         tr.classList.remove('selected');
     });
     
@@ -317,7 +325,7 @@ async function openEditModal() {
     await generateModalForm();
     
     // Заполняем форму текущими данными
-    const item = currentData.find(d => d.id === selectedId);
+    const item = currentData.find(function(d) { return d.id === selectedId; });
     if (item) {
         fillFormWithData(item);
     }
@@ -331,25 +339,27 @@ async function generateModalForm() {
     
     let html = '';
     
-    for (const field of config.fields) {
-        html += `<div class="form-group">`;
-        html += `<label class="${field.required ? 'required' : ''}">${field.label}</label>`;
+    for (let i = 0; i < config.fields.length; i++) {
+        const field = config.fields[i];
+        html += '<div class="form-group">';
+        html += '<label class="' + (field.required ? 'required' : '') + '">' + field.label + '</label>';
         
         if (field.type === 'select') {
-            html += `<select id="field_${field.name.replace('.', '_')}" name="${field.name}" ${field.required ? 'required' : ''}>
-                <option value="">Выберите...</option>
-            </select>`;
+            html += '<select id="field_' + field.name.replace('.', '_') + '" name="' + field.name + '" ' + (field.required ? 'required' : '') + '>';
+            html += '<option value="">Выберите...</option>';
+            html += '</select>';
         } else {
-            html += `<input type="text" id="field_${field.name.replace('.', '_')}" name="${field.name}" ${field.required ? 'required' : ''}>`;
+            html += '<input type="text" id="field_' + field.name.replace('.', '_') + '" name="' + field.name + '" ' + (field.required ? 'required' : '') + '>';
         }
         
-        html += `</div>`;
+        html += '</div>';
     }
     
     formBody.innerHTML = html;
     
     // Загружаем опции для select полей
-    for (const field of config.fields) {
+    for (let i = 0; i < config.fields.length; i++) {
+        const field = config.fields[i];
         if (field.type === 'select' && field.source) {
             await loadSelectOptionsForField(field);
         }
@@ -357,7 +367,7 @@ async function generateModalForm() {
 }
 
 async function loadSelectOptionsForField(field) {
-    const selectId = `field_${field.name.replace('.', '_')}`;
+    const selectId = 'field_' + field.name.replace('.', '_');
     const select = document.getElementById(selectId);
     
     if (!select) return;
@@ -365,22 +375,31 @@ async function loadSelectOptionsForField(field) {
     try {
         const data = await get(field.source);
         
-        data.forEach(item => {
+        data.forEach(function(item) {
             const option = document.createElement('option');
             option.value = item.id;
-            option.textContent = item.name || `${item.lastName} ${item.firstName}`;
+            // Безопасное отображение: name или ФИО
+            if (item.name) {
+                option.textContent = item.name;
+            } else {
+                const parts = [];
+                if (item.lastName) parts.push(item.lastName);
+                if (item.firstName) parts.push(item.firstName);
+                option.textContent = parts.join(' ') || '';
+            }
             select.appendChild(option);
         });
     } catch (error) {
-        console.error(`Error loading options for ${field.name}:`, error);
+        console.error('Error loading options for ' + field.name + ':', error);
     }
 }
 
 function fillFormWithData(item) {
     const config = dictionaryConfig[currentDictionary];
     
-    for (const field of config.fields) {
-        const inputId = `field_${field.name.replace('.', '_')}`;
+    for (let i = 0; i < config.fields.length; i++) {
+        const field = config.fields[i];
+        const inputId = 'field_' + field.name.replace('.', '_');
         const input = document.getElementById(inputId);
         
         if (!input) continue;
@@ -388,10 +407,11 @@ function fillFormWithData(item) {
         if (field.name.includes('.')) {
             // Вложенное поле, например diagnosisGroup.id
             const parts = field.name.split('.');
-            const value = item[parts[0]]?.[parts[1]];
-            input.value = value ?? '';
+            const parent = item[parts[0]];
+            const value = parent ? parent[parts[1]] : null;
+            input.value = value != null ? value : '';
         } else {
-            input.value = item[field.name] ?? '';
+            input.value = item[field.name] != null ? item[field.name] : '';
         }
     }
 }
@@ -401,8 +421,9 @@ async function saveDictRecord() {
     const data = {};
     
     // Собираем данные из формы
-    for (const field of config.fields) {
-        const inputId = `field_${field.name.replace('.', '_')}`;
+    for (let i = 0; i < config.fields.length; i++) {
+        const field = config.fields[i];
+        const inputId = 'field_' + field.name.replace('.', '_');
         const input = document.getElementById(inputId);
         
         if (!input) continue;
@@ -411,7 +432,7 @@ async function saveDictRecord() {
         
         // Валидация обязательных полей
         if (field.required && !value) {
-            showToast(`Заполните поле "${field.label}"`, 'error');
+            showToast('Заполните поле "' + field.label + '"', 'error');
             input.focus();
             return;
         }
@@ -430,7 +451,7 @@ async function saveDictRecord() {
     
     try {
         if (editMode && selectedId) {
-            await put(`${config.endpoint}/${selectedId}`, data);
+            await put(config.endpoint + '/' + selectedId, data);
             showToast('Запись обновлена', 'success');
         } else {
             await post(config.endpoint, data);
@@ -459,7 +480,7 @@ async function deleteSelected() {
     const config = dictionaryConfig[currentDictionary];
     
     try {
-        await del(`${config.endpoint}/${selectedId}`);
+        await del(config.endpoint + '/' + selectedId);
         showToast('Запись удалена', 'success');
         selectedId = null;
         await loadDictionary(currentDictionary);

@@ -18,4 +18,8 @@ public interface DetectionCaseRepository extends JpaRepository<DetectionCase, Lo
     List<DetectionCase> findByStateId(Long stateId);
 
     List<DetectionCase> findByCreatedAtBetween(LocalDateTime from, LocalDateTime to);
+
+    List<DetectionCase> findByPatientIdOrderByDiagnosisDateDesc(Long patientId);
+
+    long countByPatientId(Long patientId);
 }
