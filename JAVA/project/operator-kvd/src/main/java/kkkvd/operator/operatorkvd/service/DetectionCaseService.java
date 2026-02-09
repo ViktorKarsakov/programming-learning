@@ -1,9 +1,6 @@
 package kkkvd.operator.operatorkvd.service;
 
-import kkkvd.operator.operatorkvd.dto.CreateDetectionCaseRequest;
-import kkkvd.operator.operatorkvd.dto.DetectionCaseResponse;
-import kkkvd.operator.operatorkvd.dto.PatientSearchRequest;
-import kkkvd.operator.operatorkvd.dto.PatientSearchResult;
+import kkkvd.operator.operatorkvd.dto.*;
 import kkkvd.operator.operatorkvd.entities.*;
 import kkkvd.operator.operatorkvd.repositories.*;
 import kkkvd.operator.operatorkvd.specification.DetectionCaseSpecification;
@@ -46,11 +43,36 @@ public class DetectionCaseService {
     @Transactional
     public DetectionCase create(CreateDetectionCaseRequest request) {
         Patient patient = findOrCreatePatient(request);
+        CreateCaseForPatientRequest caseRequest = new CreateCaseForPatientRequest();
+        caseRequest.setDiagnosisId(request.getDiagnosisId());
+        caseRequest.setDiagnosisDate(request.getDiagnosisDate());
+        caseRequest.setDoctorId(request.getDoctorId());
+        caseRequest.setPlaceId(request.getPlaceId());
+        caseRequest.setProfileId(request.getProfileId());
+        caseRequest.setInspectionId(request.getInspectionId());
+        caseRequest.setTransferId(request.getTransferId());
+        caseRequest.setStateId(request.getStateId());
+        caseRequest.setCitizenCategoryId(request.getCitizenCategoryId());
+        caseRequest.setCitizenTypeId(request.getCitizenTypeId());
+        caseRequest.setSocialGroupId(request.getSocialGroupId());
+        caseRequest.setIsContact(request.getIsContact());
+        caseRequest.setLabTestIds(request.getLabTestIds());
+
+        return createCaseInternal(patient, caseRequest);
+    }
+
+    public DetectionCaseResponse createForExistingPatient(Patient patient, CreateCaseForPatientRequest request) {
+        DetectionCase savedCase = createCaseInternal(patient, request);
+        return toResponse(savedCase);
+    }
+
+    @Transactional
+    protected DetectionCase createCaseInternal(Patient patient, CreateCaseForPatientRequest request) {
         DetectionCase detectionCase = new DetectionCase();
         detectionCase.setPatient(patient);
 
         detectionCase.setDiagnosis(diagnosisRepository.findById(request.getDiagnosisId())
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Диагноз не найден")));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Диагноз не найден")));
 
         detectionCase.setDiagnosisDate(request.getDiagnosisDate());
 
@@ -85,24 +107,28 @@ public class DetectionCaseService {
 
         DetectionCase savedCase = detectionCaseRepository.save(detectionCase);
 
-        if (request.getLabTestIds() != null && !request.getLabTestIds().isEmpty()) {
-            Set<Long> uniqueTests = new HashSet<>(request.getLabTestIds());
-            List<LaboratoryTestType> types = laboratoryTestTypeRepository.findAllById(uniqueTests);
-
-            List<DetectionCaseLabTest> labTests = types.stream()
-                    .map(type -> {
-                        DetectionCaseLabTest labTest = new DetectionCaseLabTest();
-                        labTest.setDetectionCase(savedCase);
-                        labTest.setLaboratoryTestType(type);
-                        return labTest;
-                    })
-                    .toList();
-
-            detectionCaseLabTestRepository.saveAll(labTests);
-
-        }
+        rewriteLabTests(savedCase, request.getLabTestIds());
 
         return savedCase;
+    }
+
+    private void rewriteLabTests(DetectionCase savedCase, Set<Long> labTestIds) {
+        if (labTestIds == null || labTestIds.isEmpty()) {
+            return;
+        }
+        Set<Long> uniqueTests = new HashSet<>(labTestIds);
+        List<LaboratoryTestType> types = laboratoryTestTypeRepository.findAllById(uniqueTests);
+
+        List<DetectionCaseLabTest> labTests = types.stream()
+                .map(type -> {
+                    DetectionCaseLabTest labTest = new DetectionCaseLabTest();
+                    labTest.setDetectionCase(savedCase);
+                    labTest.setLaboratoryTestType(type);
+                    return labTest;
+                })
+                .toList();
+
+        detectionCaseLabTestRepository.saveAll(labTests);
     }
 
     private Patient findOrCreatePatient(CreateDetectionCaseRequest request) {
@@ -147,6 +173,14 @@ public class DetectionCaseService {
         return cases.map(this::toSearchResult);
     }
 
+    @Transactional
+    public void deleteCase(Long detectionCaseId) {
+        DetectionCase dc = detectionCaseRepository.findById(detectionCaseId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Случай не найден"));
+        detectionCaseLabTestRepository.deleteByDetectionCaseId(detectionCaseId);
+        detectionCaseRepository.delete(dc);
+    }
+
     private PatientSearchResult toSearchResult(DetectionCase dc) {
         Patient patient = dc.getPatient();
         return PatientSearchResult.builder()
@@ -178,6 +212,4 @@ public class DetectionCaseService {
                 .createdAt(detectionCase.getCreatedAt())
                 .build();
     }
-
-
 }
