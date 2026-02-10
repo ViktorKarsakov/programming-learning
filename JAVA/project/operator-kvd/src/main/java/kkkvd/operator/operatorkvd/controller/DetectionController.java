@@ -43,4 +43,10 @@ public class DetectionController {
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCase(@PathVariable Long id) {
+        detectionCaseService.deleteCase(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -61,13 +61,13 @@ public class DetectionCaseService {
         return createCaseInternal(patient, caseRequest);
     }
 
+    @Transactional
     public DetectionCaseResponse createForExistingPatient(Patient patient, CreateCaseForPatientRequest request) {
         DetectionCase savedCase = createCaseInternal(patient, request);
         return toResponse(savedCase);
     }
 
-    @Transactional
-    protected DetectionCase createCaseInternal(Patient patient, CreateCaseForPatientRequest request) {
+    private DetectionCase createCaseInternal(Patient patient, CreateCaseForPatientRequest request) {
         DetectionCase detectionCase = new DetectionCase();
         detectionCase.setPatient(patient);
 
@@ -113,6 +113,8 @@ public class DetectionCaseService {
     }
 
     private void rewriteLabTests(DetectionCase savedCase, Set<Long> labTestIds) {
+        detectionCaseLabTestRepository.deleteByDetectionCaseId(savedCase.getId());
+
         if (labTestIds == null || labTestIds.isEmpty()) {
             return;
         }
@@ -159,7 +161,7 @@ public class DetectionCaseService {
     }
 
     public List<DetectionCase> getByPatientId(Long patientId) {
-        return detectionCaseRepository.findByPatientId(patientId);
+        return detectionCaseRepository.findByPatientIdOrderByDiagnosisDateDesc(patientId);
     }
 
     public Page<PatientSearchResult> search(PatientSearchRequest request) {

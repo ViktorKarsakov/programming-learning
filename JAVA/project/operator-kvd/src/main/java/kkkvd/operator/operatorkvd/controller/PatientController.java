@@ -1,8 +1,13 @@
 package kkkvd.operator.operatorkvd.controller;
 
+import kkkvd.operator.operatorkvd.dto.CreateCaseForPatientRequest;
+import kkkvd.operator.operatorkvd.dto.DetectionCaseResponse;
 import kkkvd.operator.operatorkvd.dto.PatientDetailResponse;
+import kkkvd.operator.operatorkvd.dto.UpdatePatientRequest;
+import kkkvd.operator.operatorkvd.entities.Patient;
 import kkkvd.operator.operatorkvd.service.PatientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,5 +22,22 @@ public class PatientController {
     @GetMapping("/{id}")
     public ResponseEntity<PatientDetailResponse> getPatient(@PathVariable Long id) {
         return ResponseEntity.ok(patientService.getPatientWithCases(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @RequestBody UpdatePatientRequest request) {
+        return ResponseEntity.ok(patientService.updatePatient(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
+        patientService.deletePatient(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/cases")
+    public ResponseEntity<DetectionCaseResponse> addCaseToPatient(@PathVariable Long id, @RequestBody CreateCaseForPatientRequest request) {
+        DetectionCaseResponse response = patientService.addCaseToPatient(id, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
