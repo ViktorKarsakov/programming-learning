@@ -2,6 +2,7 @@ package kkkvd.operator.operatorkvd.service;
 
 import kkkvd.operator.operatorkvd.dto.*;
 import kkkvd.operator.operatorkvd.entities.*;
+import kkkvd.operator.operatorkvd.mapper.CaseDetailMapper;
 import kkkvd.operator.operatorkvd.repositories.*;
 import kkkvd.operator.operatorkvd.specification.DetectionCaseSpecification;
 import kkkvd.operator.operatorkvd.util.DoctorNameFormatter;
@@ -67,43 +68,75 @@ public class DetectionCaseService {
         return toResponse(savedCase);
     }
 
+    @Transactional(readOnly = true)
+    public CaseDetailDto getCaseById(Long caseId) {
+        DetectionCase dc = detectionCaseRepository.findById(caseId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Случай не найден"));
+        List<RefDto> labTests = getLabTestsAsRefDto(dc.getId());
+        return CaseDetailMapper.toDetailDto(dc, labTests);
+    }
+
+    @Transactional
+    public CaseDetailDto updateCase(Long caseId, CreateCaseForPatientRequest request) {
+        DetectionCase dc = detectionCaseRepository.findById(caseId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Случай не найден"));
+        fillCaseFromRequest(dc, request);
+        DetectionCase savedCase = detectionCaseRepository.save(dc);
+        rewriteLabTests(savedCase, request.getLabTestIds());
+        List<RefDto> labTests = getLabTestsAsRefDto(savedCase.getId());
+        return CaseDetailMapper.toDetailDto(savedCase, labTests);
+    }
+
+    private List<RefDto> getLabTestsAsRefDto(Long caseId) {
+        return detectionCaseLabTestRepository.findByDetectionCaseId(caseId)
+                .stream()
+                .map(labTest -> RefDto.builder()
+                        .id(labTest.getLaboratoryTestType().getId())
+                        .name(labTest.getLaboratoryTestType().getName())
+                        .build())
+                .toList();
+    }
+
+    private void fillCaseFromRequest(DetectionCase dc, CreateCaseForPatientRequest request) {
+        dc.setDiagnosis(diagnosisRepository.findById(request.getDiagnosisId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Диагноз не найден")));
+
+        dc.setDiagnosisDate(request.getDiagnosisDate());
+
+        dc.setDoctor(doctorRepository.findById(request.getDoctorId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Доктор не найден")));
+
+        dc.setPlace(placeRepository.findById(request.getPlaceId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Место не найдено")));
+
+        dc.setProfile(profileRepository.findById(request.getProfileId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Профиль не найден")));
+
+        dc.setInspection(inspectionRepository.findById(request.getInspectionId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Осмотр не найден")));
+
+        dc.setTransfer(transferRepository.findById(request.getTransferId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Пути передачи не найдены")));
+
+        dc.setState(stateRepository.findById(request.getStateId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Район не найден")));
+
+        dc.setCitizenCategory(citizenCategoryRepository.findById(request.getCitizenCategoryId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Категория гражданина не найдена")));
+
+        dc.setCitizenType(citizenTypeRepository.findById(request.getCitizenTypeId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Тип гражданина не найден")));
+
+        dc.setSocialGroup(socialGroupRepository.findById(request.getSocialGroupId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Социальная группа не найдена")));
+
+        dc.setIsContact(request.getIsContact() != null ? request.getIsContact() : false);
+    }
+
     private DetectionCase createCaseInternal(Patient patient, CreateCaseForPatientRequest request) {
         DetectionCase detectionCase = new DetectionCase();
         detectionCase.setPatient(patient);
-
-        detectionCase.setDiagnosis(diagnosisRepository.findById(request.getDiagnosisId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Диагноз не найден")));
-
-        detectionCase.setDiagnosisDate(request.getDiagnosisDate());
-
-        detectionCase.setDoctor(doctorRepository.findById(request.getDoctorId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Доктор не найден")));
-
-        detectionCase.setPlace(placeRepository.findById(request.getPlaceId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Место не найдено")));
-
-        detectionCase.setProfile(profileRepository.findById(request.getProfileId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Профиль не найден")));
-
-        detectionCase.setInspection(inspectionRepository.findById(request.getInspectionId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Осмотр не найден")));
-
-        detectionCase.setTransfer(transferRepository.findById(request.getTransferId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Пути передачи не найдены")));
-
-        detectionCase.setState(stateRepository.findById(request.getStateId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Район не найден")));
-
-        detectionCase.setCitizenCategory(citizenCategoryRepository.findById(request.getCitizenCategoryId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Категория гражданина не найдена")));
-
-        detectionCase.setCitizenType(citizenTypeRepository.findById(request.getCitizenTypeId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Тип гражданина не найден")));
-
-        detectionCase.setSocialGroup(socialGroupRepository.findById(request.getSocialGroupId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Социальная группа не найдена")));
-
-        detectionCase.setIsContact(request.getIsContact() != null ? request.getIsContact() : false);
+        fillCaseFromRequest(detectionCase, request);
 
         DetectionCase savedCase = detectionCaseRepository.save(detectionCase);
 
