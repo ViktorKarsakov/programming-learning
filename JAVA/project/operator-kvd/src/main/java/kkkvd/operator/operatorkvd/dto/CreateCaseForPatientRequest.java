@@ -7,6 +7,8 @@ import java.util.Set;
 
 @Data
 public class CreateCaseForPatientRequest {
+    //Пациент уже есть - добавить еще один случай заболевания
+
     private Long citizenCategoryId;
     private Long citizenTypeId;
     private Long stateId;

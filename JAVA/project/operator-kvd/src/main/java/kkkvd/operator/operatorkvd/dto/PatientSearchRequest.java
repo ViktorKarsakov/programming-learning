@@ -6,6 +6,8 @@ import java.time.LocalDate;
 
 @Data
 public class PatientSearchRequest {
+    //Поиск, тут все фильтры и page, size
+
 
     private String lastName;
     private String firstName;

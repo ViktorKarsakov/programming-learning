@@ -14,6 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CaseDetailDto {
+    //Карточка случая пациента
+
     private Long id;
     private Long patientId;
     private LocalDate diagnosisDate;

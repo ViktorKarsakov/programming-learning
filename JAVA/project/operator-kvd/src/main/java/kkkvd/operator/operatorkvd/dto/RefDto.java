@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RefDto {
+
+    //Справочники (показать имя, иметь id для селекта)
     private Long id;
     private String name;
 }

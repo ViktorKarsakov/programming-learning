@@ -1,10 +1,7 @@
 package kkkvd.operator.operatorkvd.controller;
 
 import jakarta.validation.Valid;
-import kkkvd.operator.operatorkvd.dto.CreateDetectionCaseRequest;
-import kkkvd.operator.operatorkvd.dto.DetectionCaseResponse;
-import kkkvd.operator.operatorkvd.dto.PatientSearchRequest;
-import kkkvd.operator.operatorkvd.dto.PatientSearchResult;
+import kkkvd.operator.operatorkvd.dto.*;
 import kkkvd.operator.operatorkvd.entities.DetectionCase;
 import kkkvd.operator.operatorkvd.service.DetectionCaseService;
 import lombok.RequiredArgsConstructor;
@@ -44,9 +41,19 @@ public class DetectionController {
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<CaseDetailDto> getCaseById(@PathVariable Long id) {
+        return ResponseEntity.ok(detectionCaseService.getCaseById(id));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCase(@PathVariable Long id) {
         detectionCaseService.deleteCase(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CaseDetailDto> updateCase(@PathVariable Long id, @RequestBody CreateCaseForPatientRequest request) {
+        return ResponseEntity.ok(detectionCaseService.updateCase(id, request));
     }
 }

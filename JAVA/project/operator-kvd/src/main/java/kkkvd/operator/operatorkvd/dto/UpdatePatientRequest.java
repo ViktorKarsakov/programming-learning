@@ -6,6 +6,8 @@ import java.time.LocalDate;
 
 @Data
 public class UpdatePatientRequest {
+    //Редактировать поля пациента (личные данные)
+
     private String lastName;
     private String firstName;
     private String middleName;

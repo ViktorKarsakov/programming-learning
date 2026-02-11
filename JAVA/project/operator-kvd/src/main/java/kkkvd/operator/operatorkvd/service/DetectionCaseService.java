@@ -41,6 +41,7 @@ public class DetectionCaseService {
     private final SocialGroupRepository socialGroupRepository;
     private final LaboratoryTestTypeRepository laboratoryTestTypeRepository;
 
+    //Новый пациент
     @Transactional
     public DetectionCase create(CreateDetectionCaseRequest request) {
         Patient patient = findOrCreatePatient(request);
@@ -60,6 +61,33 @@ public class DetectionCaseService {
         caseRequest.setLabTestIds(request.getLabTestIds());
 
         return createCaseInternal(patient, caseRequest);
+    }
+
+    private Patient findOrCreatePatient(CreateDetectionCaseRequest request) {
+        String middle = request.getMiddleName();
+        if (middle != null && middle.isBlank()){
+            middle = null;
+        }
+        String finalMiddleName = middle;
+
+        return patientRepository
+                .findByFullNameAndBirthDate(
+                        request.getLastName(),
+                        request.getFirstName(),
+                        finalMiddleName,
+                        request.getBirthDate()
+                )
+                .orElseGet(() -> {
+                    Patient patient = new Patient();
+                    patient.setLastName(request.getLastName());
+                    patient.setFirstName(request.getFirstName());
+                    patient.setMiddleName(finalMiddleName);
+                    patient.setBirthDate(request.getBirthDate());
+                    patient.setAddress(request.getAddress());
+                    patient.setGender(genderRepository.findById(request.getGenderId())
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Пол не найден")));
+                    return patientRepository.save(patient);
+                });
     }
 
     @Transactional
@@ -164,33 +192,6 @@ public class DetectionCaseService {
                 .toList();
 
         detectionCaseLabTestRepository.saveAll(labTests);
-    }
-
-    private Patient findOrCreatePatient(CreateDetectionCaseRequest request) {
-        String middle = request.getMiddleName();
-        if (middle != null && middle.isBlank()){
-            middle = null;
-        }
-        String finalMiddleName = middle;
-
-        return patientRepository
-                .findByFullNameAndBirthDate(
-                        request.getLastName(),
-                        request.getFirstName(),
-                        finalMiddleName,
-                        request.getBirthDate()
-                )
-                .orElseGet(() -> {
-                    Patient patient = new Patient();
-                    patient.setLastName(request.getLastName());
-                    patient.setFirstName(request.getFirstName());
-                    patient.setMiddleName(finalMiddleName);
-                    patient.setBirthDate(request.getBirthDate());
-                    patient.setAddress(request.getAddress());
-                    patient.setGender(genderRepository.findById(request.getGenderId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Пол не найден")));
-                    return patientRepository.save(patient);
-                });
     }
 
     public List<DetectionCase> getByPatientId(Long patientId) {

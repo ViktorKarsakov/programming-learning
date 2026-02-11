@@ -8,6 +8,7 @@ import java.util.Set;
 @Data
 public class CreateDetectionCaseRequest {
 
+    //Создание нового пациента + случай
     private String lastName;
     private String firstName;
     private String middleName;

@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class PatientSearchResult {
+    //Результаты поиска на форме Поиска в одну строку
+
     private Long patientId;
     private Long detectionCaseId;
 

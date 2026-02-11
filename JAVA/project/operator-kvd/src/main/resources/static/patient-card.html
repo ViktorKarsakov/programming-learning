@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карточка пациента - КВД</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-title">КВД</div>
+        <div class="sidebar-subtitle">Информационная система</div>
+
+        <nav class="sidebar-nav">
+            <a href="patient-form.html">
+                <span class="icon">📝</span> Ввод данных
+            </a>
+            <a href="patient-search.html">
+                <span class="icon">🔍</span> Поиск пациентов
+            </a>
+            <a href="#" class="submenu-toggle collapsed" onclick="toggleSubmenu(this)">
+                <span><span class="icon">📚</span> Справочники</span>
+            </a>
+            <div class="submenu collapsed">
+                <a href="dictionaries.html?dict=genders">Пол</a>
+                <a href="dictionaries.html?dict=diagnosis-groups">Группы диагнозов</a>
+                <a href="dictionaries.html?dict=diagnoses">Диагнозы</a>
+                <a href="dictionaries.html?dict=branches">Филиалы</a>
+                <a href="dictionaries.html?dict=departments">Отделения</a>
+                <a href="dictionaries.html?dict=doctors">Врачи</a>
+                <a href="dictionaries.html?dict=state-groups">Группы районов</a>
+                <a href="dictionaries.html?dict=states">Районы</a>
+                <a href="dictionaries.html?dict=places">Места выявления</a>
+                <a href="dictionaries.html?dict=profiles">Профили</a>
+                <a href="dictionaries.html?dict=inspections">Типы осмотра</a>
+                <a href="dictionaries.html?dict=transfers">Пути передачи</a>
+                <a href="dictionaries.html?dict=citizen-categories">Категории проживания</a>
+                <a href="dictionaries.html?dict=citizen-types">Типы нас. пунктов</a>
+                <a href="dictionaries.html?dict=social-groups">Соц. группы</a>
+                <a href="dictionaries.html?dict=lab-test-types">Лаб. тесты</a>
+            </div>
+            <a href="#">
+                <span class="icon">⚙️</span> Настройки
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-exit">
+                <span>🚪</span> Выход
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+        <div class="page-header">
+            <h1 class="page-title">Карточка пациента</h1>
+            <a href="patient-search.html" class="btn btn-secondary">← Назад к поиску</a>
+        </div>
+
+        <!-- Информация о пациенте -->
+        <section class="card" id="patientInfoCard">
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </section>
+
+        <!-- История заболеваний -->
+        <section class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h2 class="card-title" style="margin-bottom: 0;">📋 История заболеваний</h2>
+                <button class="btn btn-primary btn-sm" onclick="openAddCaseModal()">
+                    ➕ Добавить случай
+                </button>
+            </div>
+            
+            <div id="casesContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Модальное окно редактирования пациента -->
+<div class="modal-overlay" id="editPatientModal">
+    <div class="modal" style="max-width: 550px;">
+        <div class="modal-header">
+            <h3>Редактирование пациента</h3>
+            <button class="modal-close" onclick="closeModal('editPatientModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="editPatientForm">
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr;">
+                    <div class="form-group">
+                        <label class="required">Фамилия</label>
+                        <input type="text" id="editLastName" name="lastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Имя</label>
+                        <input type="text" id="editFirstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Отчество</label>
+                        <input type="text" id="editMiddleName" name="middleName">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Пол</label>
+                        <select id="editGender" name="genderId" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Дата рождения</label>
+                        <input type="date" id="editBirthDate" name="birthDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Адрес</label>
+                        <input type="text" id="editAddress" name="address">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('editPatientModal')">Отмена</button>
+            <button class="btn btn-success" onclick="savePatient()">💾 Сохранить</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно добавления/редактирования случая -->
+<div class="modal-overlay" id="caseModal">
+    <div class="modal" style="max-width: 900px;">
+        <div class="modal-header">
+            <h3 id="caseModalTitle">Добавление случая</h3>
+            <button class="modal-close" onclick="closeModal('caseModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="caseForm">
+                <input type="hidden" id="caseId">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <!-- Левая колонка -->
+                    <div>
+                        <h4 style="margin: 0 0 16px 0; color: #374151;">🏠 Социальные данные</h4>
+                        <div class="form-group">
+                            <label class="required">Категория проживания</label>
+                            <select id="caseCitizenCategory" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">Тип населённого пункта</label>
+                            <select id="caseCitizenType" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">Район</label>
+                            <select id="caseState" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">Социальная группа</label>
+                            <select id="caseSocialGroup" required></select>
+                        </div>
+                    </div>
+                    
+                    <!-- Правая колонка -->
+                    <div>
+                        <h4 style="margin: 0 0 16px 0; color: #374151;">🏥 Данные о заболевании</h4>
+                        <div class="form-group">
+                            <label class="required">Диагноз</label>
+                            <select id="caseDiagnosis" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">Дата диагноза</label>
+                            <input type="date" id="caseDiagnosisDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">Врач</label>
+                            <select id="caseDoctor" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">Место выявления</label>
+                            <select id="casePlace" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">Профиль врача / койки</label>
+                            <select id="caseProfile" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">Осмотр</label>
+                            <select id="caseInspection" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">Путь передачи</label>
+                            <select id="caseTransfer" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-item" style="background: none; padding: 0;">
+                                <input type="checkbox" id="caseIsContact">
+                                <span>По контакту</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <h4 style="margin: 24px 0 16px 0; color: #374151;">🔬 Лабораторные подтверждения</h4>
+                <div class="checkbox-grid" id="caseLabTests">
+                    <!-- Загружается динамически -->
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('caseModal')">Отмена</button>
+            <button class="btn btn-success" onclick="saveCase()">💾 Сохранить</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно подтверждения удаления -->
+<div class="modal-overlay" id="deleteConfirmModal">
+    <div class="modal" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3>Подтверждение</h3>
+            <button class="modal-close" onclick="closeModal('deleteConfirmModal')">×</button>
+        </div>
+        <div class="modal-body">
+            <p id="deleteConfirmText">Вы уверены?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('deleteConfirmModal')">Отмена</button>
+            <button class="btn btn-danger" id="deleteConfirmBtn">Удалить</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/patient-card.js"></script>
+
+</body>
+</html>

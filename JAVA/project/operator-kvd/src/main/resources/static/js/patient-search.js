@@ -130,7 +130,7 @@ function renderSearchResults() {
     }
     
     tbody.innerHTML = searchResults.map(item => `
-        <tr data-id="${item.detectionCaseId}" data-patient-id="${item.patientId}" onclick="selectSearchRow(this)">
+        <tr data-id="${item.detectionCaseId}" data-patient-id="${item.patientId}" onclick="selectSearchRow(this)" ondblclick="goToPatientCard(this)">
             <td>${escapeHtml(item.lastName || '')}</td>
             <td>${escapeHtml(item.firstName || '')}</td>
             <td>${escapeHtml(item.middleName || '')}</td>
@@ -171,6 +171,12 @@ function selectSearchRow(row) {
     row.classList.add('selected');
     
     updateActionButtons();
+}
+
+// Переход на карточку по двойному клику
+function goToPatientCard(row) {
+    const patientId = row.dataset.patientId;
+    window.location.href = `patient-card.html?id=${patientId}`;
 }
 
 function updateActionButtons() {
@@ -268,12 +274,9 @@ function viewPatientDetails() {
     }
     
     const patientId = selected.dataset.patientId;
-    const caseId = selected.dataset.id;
     
-    // Здесь можно открыть модальное окно с деталями или перейти на другую страницу
-    showToast(`Просмотр пациента ID: ${patientId}, случай: ${caseId}`, 'info');
-    
-    // TODO: Реализовать просмотр деталей
+    // Переходим на карточку пациента
+    window.location.href = `patient-card.html?id=${patientId}`;
 }
 
 // Утилита для экранирования HTML
