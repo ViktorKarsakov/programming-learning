@@ -14,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DictionaryService {
 
+    private final DetectionCaseRepository detectionCaseRepository;
     private final BranchRepository branchRepository;
     private final CitizenCategoryRepository citizenCategoryRepository;
     private final CitizenTypeRepository citizenTypeRepository;
@@ -30,6 +31,8 @@ public class DictionaryService {
     private final TransferRepository transferRepository;
     private final SocialGroupRepository socialGroupRepository;
     private final LaboratoryTestTypeRepository laboratoryTestTypeRepository;
+    private final PatientRepository patientRepository;
+    private final DetectionCaseLabTestRepository detectionCaseLabTestRepository;
 
     public List<Branch> getAllBranches() {
         return branchRepository.findAll();
@@ -301,6 +304,9 @@ public class DictionaryService {
         if (!genderRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Пол не найден");
         }
+        if (patientRepository.countByGenderId(id) > 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: пол используется в записях пациентов");
+        }
         genderRepository.deleteById(id);
     }
 
@@ -308,6 +314,9 @@ public class DictionaryService {
     public void deleteDiagnosisGroup(Long id) {
         if (!diagnosisGroupRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Группа диагнозов не найдена");
+        }
+        if (diagnosisRepository.countByDiagnosisGroupId(id) > 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: в группе есть диагнозы");
         }
         diagnosisGroupRepository.deleteById(id);
     }
@@ -317,6 +326,9 @@ public class DictionaryService {
         if (!diagnosisRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Диагноз не найден");
         }
+        if (detectionCaseRepository.countByDiagnosisId(id) > 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: диагноз используется в случаях заболевания");
+        }
         diagnosisRepository.deleteById(id);
     }
 
@@ -324,6 +336,9 @@ public class DictionaryService {
     public void deleteBranch(Long id) {
         if (!branchRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Филиал не найден");
+        }
+        if (departmentRepository.countByBranchId(id) > 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: в филиале есть отделения");
         }
         branchRepository.deleteById(id);
     }
@@ -333,6 +348,9 @@ public class DictionaryService {
         if (!departmentRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Отделение не найдено");
         }
+        if (doctorRepository.countByDepartmentId(id) > 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: в отделении есть врачи");
+        }
         departmentRepository.deleteById(id);
     }
 
@@ -340,6 +358,9 @@ public class DictionaryService {
     public void deleteDoctor(Long id) {
         if (!doctorRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Врач не найден");
+        }
+        if (detectionCaseRepository.countByDoctorId(id) > 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: врач привязан к случаям заболевания");
         }
         doctorRepository.deleteById(id);
     }
@@ -349,6 +370,9 @@ public class DictionaryService {
         if (!stateGroupRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Группа районов не найдена");
         }
+        if (stateRepository.countByStateGroupId(id) > 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: в группе есть районы");
+        }
         stateGroupRepository.deleteById(id);
     }
 
@@ -356,6 +380,9 @@ public class DictionaryService {
     public void deleteState(Long id) {
         if (!stateRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Район не найден");
+        }
+        if (detectionCaseRepository.countByStateId(id) > 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: район используется в случаях заболевания");
         }
         stateRepository.deleteById(id);
     }
@@ -365,6 +392,9 @@ public class DictionaryService {
         if (!placeRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Место выявления не найдено");
         }
+        if (detectionCaseRepository.countByPlaceId(id) > 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: место выявления используется в случаях заболевания");
+        }
         placeRepository.deleteById(id);
     }
 
@@ -372,6 +402,9 @@ public class DictionaryService {
     public void deleteProfile(Long id) {
         if (!profileRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Профиль не найден");
+        }
+        if (detectionCaseRepository.countByProfileId(id) > 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: профиль используется в случаях заболевания");
         }
         profileRepository.deleteById(id);
     }
@@ -381,6 +414,9 @@ public class DictionaryService {
         if (!inspectionRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Тип осмотра не найден");
         }
+        if (detectionCaseRepository.countByInspectionId(id) > 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: тип осмотра используется в случаях заболевания");
+        }
         inspectionRepository.deleteById(id);
     }
 
@@ -388,6 +424,9 @@ public class DictionaryService {
     public void deleteTransfer(Long id) {
         if (!transferRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Путь передачи не найден");
+        }
+        if (detectionCaseRepository.countByTransferId(id) > 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: путь передачи используется в случаях заболевания");
         }
         transferRepository.deleteById(id);
     }
@@ -397,6 +436,9 @@ public class DictionaryService {
         if (!citizenCategoryRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Категория проживания не найдена");
         }
+        if (detectionCaseRepository.countByCitizenCategoryId(id) > 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: категория проживания используется в случаях заболевания");
+        }
         citizenCategoryRepository.deleteById(id);
     }
 
@@ -404,6 +446,9 @@ public class DictionaryService {
     public void deleteCitizenType(Long id) {
         if (!citizenTypeRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Тип населённого пункта не найден");
+        }
+        if (detectionCaseRepository.countByCitizenTypeId(id) > 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: тип населённого пункта используется в случаях заболевания");
         }
         citizenTypeRepository.deleteById(id);
     }
@@ -413,6 +458,9 @@ public class DictionaryService {
         if (!socialGroupRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Социальная группа не найдена");
         }
+        if (detectionCaseRepository.countBySocialGroupId(id) > 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: социальная группа используется в случаях заболевания");
+        }
         socialGroupRepository.deleteById(id);
     }
 
@@ -420,6 +468,9 @@ public class DictionaryService {
     public void deleteLaboratoryTestType(Long id) {
         if (!laboratoryTestTypeRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Тип лаб. теста не найден");
+        }
+        if (detectionCaseLabTestRepository.countByLaboratoryTestTypeId(id) > 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: тип лаб. теста используется в случаях заболевания");
         }
         laboratoryTestTypeRepository.deleteById(id);
     }

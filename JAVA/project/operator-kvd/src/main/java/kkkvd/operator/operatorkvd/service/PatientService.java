@@ -41,7 +41,7 @@ public class PatientService {
     }
 
     @Transactional
-    public Patient updatePatient(Long patientId, UpdatePatientRequest request) {
+    public PatientDetailResponse updatePatient(Long patientId, UpdatePatientRequest request) {
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пациент не найден"));
 
@@ -57,7 +57,9 @@ public class PatientService {
             patient.setGender(gender);
         }
 
-        return patientRepository.save(patient);
+        patientRepository.save(patient);
+
+        return getPatientWithCases(patientId);
     }
 
     @Transactional

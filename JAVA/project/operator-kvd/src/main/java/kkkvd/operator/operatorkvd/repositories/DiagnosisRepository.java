@@ -12,4 +12,6 @@ public interface DiagnosisRepository extends JpaRepository<Diagnosis, Long> {
     List<Diagnosis> findByDiagnosisGroupId(Long diagnosisGroupId);
 
     List<Diagnosis> findAllByOrderByNameAsc();
+
+    long countByDiagnosisGroupId(Long diagnosisGroupId);
 }

@@ -22,4 +22,24 @@ public interface DetectionCaseRepository extends JpaRepository<DetectionCase, Lo
     List<DetectionCase> findByPatientIdOrderByDiagnosisDateDesc(Long patientId);
 
     long countByPatientId(Long patientId);
+
+    long countByDoctorId(Long doctorId);
+
+    long countByDiagnosisId(Long diagnosisId);
+
+    long countByPlaceId(Long placeId);
+
+    long countByProfileId(Long profileId);
+
+    long countByInspectionId(Long inspectionId);
+
+    long countByTransferId(Long transferId);
+
+    long countByStateId(Long stateId);
+
+    long countByCitizenCategoryId(Long citizenCategoryId);
+
+    long countByCitizenTypeId(Long citizenTypeId);
+
+    long countBySocialGroupId(Long socialGroupId);
 }

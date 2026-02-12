@@ -53,7 +53,7 @@ public class DetectionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CaseDetailDto> updateCase(@PathVariable Long id, @RequestBody CreateCaseForPatientRequest request) {
+    public ResponseEntity<CaseDetailDto> updateCase(@PathVariable Long id, @Valid @RequestBody CreateCaseForPatientRequest request) {
         return ResponseEntity.ok(detectionCaseService.updateCase(id, request));
     }
 }

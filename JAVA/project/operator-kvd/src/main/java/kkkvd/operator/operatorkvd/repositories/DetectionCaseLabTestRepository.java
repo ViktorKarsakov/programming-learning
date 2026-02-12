@@ -12,4 +12,6 @@ public interface DetectionCaseLabTestRepository extends JpaRepository<DetectionC
     List<DetectionCaseLabTest> findByDetectionCaseId(Long detectionCaseId);
 
     void deleteByDetectionCaseId(Long detectionCaseId);
+
+    long countByLaboratoryTestTypeId(Long laboratoryTestTypeId);
 }

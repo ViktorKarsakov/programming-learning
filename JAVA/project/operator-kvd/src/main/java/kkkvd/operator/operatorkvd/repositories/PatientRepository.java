@@ -39,4 +39,6 @@ public interface PatientRepository extends JpaRepository<Patient, Long> , JpaSpe
 
     boolean existsByLastNameAndFirstNameAndMiddleNameAndBirthDate(
             String lastName, String firstName, String middleName, LocalDate birthDate);
+
+    long countByGenderId(Long genderId);
 }

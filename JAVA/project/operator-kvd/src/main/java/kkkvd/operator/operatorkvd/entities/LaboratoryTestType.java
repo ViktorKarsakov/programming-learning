@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class LaboratoryTestType {
+public class LaboratoryTestType implements NamedDictionary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

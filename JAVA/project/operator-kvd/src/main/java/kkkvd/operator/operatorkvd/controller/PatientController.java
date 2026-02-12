@@ -1,5 +1,6 @@
 package kkkvd.operator.operatorkvd.controller;
 
+import jakarta.validation.Valid;
 import kkkvd.operator.operatorkvd.dto.CreateCaseForPatientRequest;
 import kkkvd.operator.operatorkvd.dto.DetectionCaseResponse;
 import kkkvd.operator.operatorkvd.dto.PatientDetailResponse;
@@ -25,7 +26,7 @@ public class PatientController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @RequestBody UpdatePatientRequest request) {
+    public ResponseEntity<PatientDetailResponse> updatePatient(@PathVariable Long id, @Valid @RequestBody UpdatePatientRequest request) {
         return ResponseEntity.ok(patientService.updatePatient(id, request));
     }
 
