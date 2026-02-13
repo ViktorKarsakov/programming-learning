@@ -383,4 +383,27 @@ public class DictionaryController {
         dictionaryService.deleteDepartment(id);
         return ResponseEntity.noContent().build();
     }
+
+    //Population
+
+    @GetMapping("/population")
+    public ResponseEntity<List<Population>> getPopulations() {
+        return ResponseEntity.ok(dictionaryService.getAllPopulations());
+    }
+
+    @PostMapping("/population")
+    public ResponseEntity<Population> createPopulation(@RequestBody Population population) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(dictionaryService.createPopulation(population));
+    }
+
+    @PutMapping("/population/{id}")
+    public ResponseEntity<Population> updatePopulation(@PathVariable Long id, @RequestBody Population population) {
+        return ResponseEntity.ok(dictionaryService.updatePopulation(id, population));
+    }
+
+    @DeleteMapping("/population/{id}")
+    public ResponseEntity<Void> deletePopulation(@PathVariable Long id) {
+        dictionaryService.deletePopulation(id);
+        return ResponseEntity.noContent().build();
+    }
 }

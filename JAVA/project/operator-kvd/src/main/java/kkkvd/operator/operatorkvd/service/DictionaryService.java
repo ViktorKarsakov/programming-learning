@@ -33,6 +33,7 @@ public class DictionaryService {
     private final LaboratoryTestTypeRepository laboratoryTestTypeRepository;
     private final PatientRepository patientRepository;
     private final DetectionCaseLabTestRepository detectionCaseLabTestRepository;
+    private final PopulationRepository populationRepository;
 
     public List<Branch> getAllBranches() {
         return branchRepository.findAll();
@@ -98,72 +99,98 @@ public class DictionaryService {
         return laboratoryTestTypeRepository.findAll();
     }
 
+    public List<Population> getAllPopulations() {
+        return populationRepository.findAll();
+    }
+
     //created
 
+    @Transactional
     public Gender createGender(Gender gender) {
         return genderRepository.save(gender);
     }
 
+    @Transactional
     public Diagnosis createDiagnosis(Diagnosis diagnosis) {
         return diagnosisRepository.save(diagnosis);
     }
 
+    @Transactional
     public DiagnosisGroup createDiagnosisGroup(DiagnosisGroup diagnosisGroup) {
         return diagnosisGroupRepository.save(diagnosisGroup);
     }
 
+    @Transactional
     public Doctor createDoctor(Doctor doctor) {
         return doctorRepository.save(doctor);
     }
 
+    @Transactional
     public State createState(State state) {
         return stateRepository.save(state);
     }
 
+    @Transactional
     public StateGroup createStateGroup(StateGroup stateGroup) {
         return stateGroupRepository.save(stateGroup);
     }
 
+    @Transactional
     public Place createPlace(Place place) {
         return placeRepository.save(place);
     }
 
+    @Transactional
     public Profile createProfile(Profile profile) {
         return profileRepository.save(profile);
     }
 
+    @Transactional
     public Inspection createInspection(Inspection inspection) {
         return inspectionRepository.save(inspection);
     }
 
+    @Transactional
     public Transfer createTransfer(Transfer transfer) {
         return transferRepository.save(transfer);
     }
 
+    @Transactional
     public CitizenCategory createCitizenCategory(CitizenCategory citizenCategory) {
         return citizenCategoryRepository.save(citizenCategory);
     }
 
+    @Transactional
     public CitizenType createCitizenType(CitizenType citizenType) {
         return citizenTypeRepository.save(citizenType);
     }
 
+    @Transactional
     public SocialGroup createSocialGroup(SocialGroup socialGroup) {
         return socialGroupRepository.save(socialGroup);
     }
 
+    @Transactional
     public LaboratoryTestType createLaboratoryTestType(LaboratoryTestType labTestType) {
         return laboratoryTestTypeRepository.save(labTestType);
     }
 
+    @Transactional
     public Branch createBranch(Branch branch) {
         return branchRepository.save(branch);
     }
 
+    @Transactional
     public Department createDepartment(Department department) {
         return departmentRepository.save(department);
     }
 
+    @Transactional
+    public Population createPopulation(Population population) {
+        return populationRepository.save(population);
+    }
+
+    //update
     @Transactional
     public Gender updateGender(Long id, Gender gender) {
         Gender existing = genderRepository.findById(id)
@@ -298,7 +325,17 @@ public class DictionaryService {
         return laboratoryTestTypeRepository.save(existing);
     }
 
+    @Transactional
+    public Population updatePopulation(Long id, Population population) {
+        Population existing = populationRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Запись не найдена"));
+        existing.setState(population.getState());
+        existing.setYear(population.getYear());
+        existing.setCountAll(population.getCountAll());
+        return populationRepository.save(existing);
+    }
 
+    //delete
     @Transactional
     public void deleteGender(Long id) {
         if (!genderRepository.existsById(id)) {
@@ -473,5 +510,13 @@ public class DictionaryService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Нельзя удалить: тип лаб. теста используется в случаях заболевания");
         }
         laboratoryTestTypeRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deletePopulation(Long id) {
+        if (!populationRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Запись не найдена");
+        }
+        populationRepository.deleteById(id);
     }
 }
