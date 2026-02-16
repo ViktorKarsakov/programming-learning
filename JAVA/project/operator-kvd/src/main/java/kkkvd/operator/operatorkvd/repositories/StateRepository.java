@@ -14,4 +14,6 @@ public interface StateRepository extends JpaRepository<State, Long> {
     List<State> findAllByOrderByStateGroupIdAscNameAsc();
 
     long countByStateGroupId(Long stateGroupId);
+
+    List<State> findByStateGroupCode(String code);
 }

@@ -17,4 +17,7 @@ public class Gender implements NamedDictionary {
 
     @Column(length = 20, nullable = false, unique = true)
     private String name;
+
+    @Column(name = "code", length = 20, nullable = false, unique = true)
+    private String code;
 }

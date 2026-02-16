@@ -15,6 +15,9 @@ public class SocialGroup implements NamedDictionary {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, length = 100)
+    @Column(name = "name", nullable = false, length = 100, unique = true)
     private String name;
+
+    @Column(name = "code", nullable = false, length = 30, unique = true)
+    private String code;
 }

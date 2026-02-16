@@ -17,4 +17,7 @@ public class StateGroup implements NamedDictionary{
 
     @Column(name = "name", nullable = false, length = 100)
     private String name;
+
+    @Column(name = "code", length = 30, nullable = false, unique = true)
+    private String code;
 }

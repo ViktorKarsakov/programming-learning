@@ -17,4 +17,7 @@ public class DiagnosisGroup implements NamedDictionary{
 
     @Column(name = "name", nullable = false, unique = true, length = 150)
     private String name;
+
+    @Column(name = "code", length = 30, nullable = false, unique = true)
+    private String code;
 }
