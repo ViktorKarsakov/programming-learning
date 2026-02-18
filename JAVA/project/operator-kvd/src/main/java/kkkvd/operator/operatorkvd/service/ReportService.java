@@ -3,6 +3,7 @@ package kkkvd.operator.operatorkvd.service;
 import kkkvd.operator.operatorkvd.dto.ReportRequest;
 import kkkvd.operator.operatorkvd.entities.DetectionCase;
 import kkkvd.operator.operatorkvd.entities.DiagnosisGroup;
+import kkkvd.operator.operatorkvd.entities.Population;
 import kkkvd.operator.operatorkvd.entities.State;
 import kkkvd.operator.operatorkvd.repositories.*;
 import lombok.RequiredArgsConstructor;
@@ -207,7 +208,77 @@ public class ReportService {
         for (var entry : byDistrict.entrySet()) {
             Map<String, Object> row = new LinkedHashMap<>();
             row.put("district", entry.getKey());
+
+            for (String groupCode : INDICATORS_GROUP_CODES) {
+                long count = entry.getValue().stream()
+                        .filter(c -> c.getDiagnosis().getDiagnosisGroup().getCode().equals(groupCode)).count();
+                String name = codeToName.getOrDefault(groupCode, groupCode);
+                row.put(name, count > 0 ? count : null);
+            }
+            rows.add(row);
         }
+        return rows;
+    }
+
+    //Заболеваемость ИППП на 100 тыс. населения
+    public List<Map<String, Object>> generateIpppPer100kReport(ReportRequest request) {
+        List<Long> stateIds = resolveStateIds(request);
+        List<DetectionCase> cases = fetchCases(request.getDateFrom(), request.getDateTo(), stateIds);
+        Map<String, String> codeToName = buildGroupCodeToNameMap();
+
+        int year = request.getDateFrom().getYear();
+
+        Map<Long, Integer> popByState = new HashMap<>();
+        for (Population p : populationRepository.findByYear(year)) {
+            popByState.put(p.getState().getId(), p.getCountAll());
+        }
+
+        Map<String, List<DetectionCase>> byDistrict = cases.stream()
+                .collect(Collectors.groupingBy(c -> c.getState().getName(), LinkedHashMap::new, Collectors.toList()));
+        List<Map<String, Object>> rows = new ArrayList<>();
+
+        for (var entry : byDistrict.entrySet()) {
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("district", entry.getKey());
+            Long stId = entry.getValue().get(0).getState().getId();
+            Integer pop = popByState.get(stId);
+
+            for (String groupCode : PER100K_GROUP_CODES) {
+                String name = codeToName.getOrDefault(groupCode, groupCode);
+                List<DetectionCase> dCases = entry.getValue().stream()
+                        .filter(c -> c.getDiagnosis().getDiagnosisGroup().getCode().equals(groupCode)).toList();
+                int count = dCases.size();
+
+                row.put(name + " Всего", count > 0 ? count : null);
+                row.put(name + " на 100т.", count > 0 && pop != null && pop > 0 ? Math.round((double) count * 100000 / pop * 10.0) / 10.0 : null);
+
+                long teens = dCases.stream().filter(c -> {
+                    int age = calculateAge(c.getPatient().getBirthDate(), c.getDiagnosisDate());
+                    return age >= 15 && age <= 17;
+                }).count();
+                row.put(name + " 15-17 лет", teens > 0 ? (int) teens : null);
+            }
+            rows.add(row);
+        }
+
+        Map<String, Object> total = new LinkedHashMap<>();
+        total.put("district", "ИТОГО");
+        for (String groupCode : PER100K_GROUP_CODES) {
+            String name = codeToName.getOrDefault(groupCode, groupCode);
+            for (String s : new String[]{" Всего", " на 100т.", " 15-17 лет"}) {
+                String key = name + s;
+                if (s.equals(" на 100т.")) {
+                    total.put(key, null);
+                } else {
+                    int sum = rows.stream().map(r -> r.get(key))
+                            .filter(Objects::nonNull)
+                            .mapToInt(v -> ((Number) v).intValue()).sum();
+                    total.put(key, sum > 0 ? sum : null);
+                }
+            }
+        }
+        rows.add(total);
+        return rows;
     }
 
 }
