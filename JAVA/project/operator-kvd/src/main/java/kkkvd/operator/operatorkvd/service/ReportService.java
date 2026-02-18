@@ -6,12 +6,15 @@ import kkkvd.operator.operatorkvd.entities.DiagnosisGroup;
 import kkkvd.operator.operatorkvd.entities.Population;
 import kkkvd.operator.operatorkvd.entities.State;
 import kkkvd.operator.operatorkvd.repositories.*;
+import kkkvd.operator.operatorkvd.util.DoctorNameFormatter;
+import kkkvd.operator.operatorkvd.util.NameUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -279,6 +282,100 @@ public class ReportService {
         }
         rows.add(total);
         return rows;
+    }
+
+    //Сведения о заболеваниях ИППП. Строки = конкретный диагноз + пол
+    //Столбцы: Диагноз | Пол | Кол-во | возрастные группы | сельские
+    public List<Map<String, Object>> generateIpppDetailReport(ReportRequest request) {
+        List<Long> stateIds = resolveStateIds(request);
+        List<DetectionCase> cases = fetchCases(request.getDateFrom(), request.getDateTo(), stateIds);
+
+        Map<String, Map<String, List<DetectionCase>>> grouped = new TreeMap<>();
+        for (DetectionCase dc : cases) {
+            grouped.computeIfAbsent(dc.getDiagnosis().getName(), k -> new LinkedHashMap<>())
+                    .computeIfAbsent(dc.getPatient().getGender().getName(), k -> new ArrayList<>())
+                    .add(dc);
+        }
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        for (var diagEntry : grouped.entrySet()) {
+            for (var genderEntry : diagEntry.getValue().entrySet()) {
+                Map<String, Object> row = new LinkedHashMap<>();
+                row.put("diagnosis", diagEntry.getKey());
+                row.put("gender", genderEntry.getKey());
+                List<DetectionCase> list = genderEntry.getValue();
+                row.put("count", list.size());
+
+                int a01 = 0, a214 = 0, a1517 = 0, a1829 = 0, a3039 = 0, a40 = 0;
+                int rur = 0, r01 = 0, r214 = 0, r1517 = 0;
+
+                for (DetectionCase dc : list) {
+                    int age = calculateAge(dc.getPatient().getBirthDate(), dc.getDiagnosisDate());
+                    boolean r = isRural(dc);
+                    if (age <= 1) a01++;
+                    else if (age <= 14) a214++;
+                    else if (age <= 17) a1517++;
+                    else if (age <= 29) a1829++;
+                    else if (age <= 39) a3039++;
+                    else a40++;
+                    if (r) {
+                        rur++;
+                        if (age <= 1) r01++;
+                        else if (age <= 14) r214++;
+                        else if (age <= 17) r1517++;
+                    }
+                }
+
+                row.put("age0_1", a01 > 0 ? a01 : null);
+                row.put("age2_14", a214 > 0 ? a214 : null);
+                row.put("age15_17", a1517 > 0 ? a1517 : null);
+                row.put("age18_29", a1829 > 0 ? a1829 : null);
+                row.put("age30_39", a3039 > 0 ? a3039 : null);
+                row.put("age40plus", a40 > 0 ? a40 : null);
+                row.put("rural", rur > 0 ? rur : null);
+                row.put("rural0_1", r01 > 0 ? r01 : null);
+                row.put("rural2_14", r214 > 0 ? r214 : null);
+                row.put("rural15_17", r1517 > 0 ? r1517 : null);
+                rows.add(row);
+            }
+        }
+        return rows;
+    }
+
+    //Список больных по врачам и району
+    //Плоский список: Пациент | Дата рождения | Диагноз | Район | Врач
+    public List<Map<String, Object>> generateDoctorPatientReport(ReportRequest request) {
+        List<Long> stateIds = resolveStateIds(request);
+        List<DetectionCase> cases = fetchCases(request.getDateFrom(), request.getDateTo(), stateIds);
+
+        cases.sort(Comparator.comparing((DetectionCase c) -> c.getDiagnosis().getName())
+                .thenComparing(c -> c.getDoctor().getLastName())
+                .thenComparing(c -> c.getState().getName())
+                .thenComparing(c -> c.getPatient().getLastName()));
+        List<Map<String, Object>> rows = new ArrayList<>();
+        for (DetectionCase dc : cases) {
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("patient", NameUtils.buildFullName(dc.getPatient()));
+            row.put("birthDate", dc.getPatient().getBirthDate());
+            row.put("diagnosis", dc.getDiagnosis().getName());
+            row.put("district", dc.getState().getName());
+            row.put("doctor", DoctorNameFormatter.formatShort(dc.getDoctor()));
+            rows.add(row);
+        }
+        return rows;
+    }
+
+    //todo: Сделать отчет "Подробный отчёт по заболеванию"
+
+    //Строители секций
+    //Добавляет секцию + подсекции для подростков/детей (если нужно)
+    private void addSectionWithAgeSubs(
+            Map<String, List<Map<String, Object>>> section,
+            String name, List<DetectionCase> cases,
+            Function<DetectionCase, String> grouper,
+            int total, boolean isSyph, boolean hasSubs, Long gId
+    ) {
+
     }
 
 }
