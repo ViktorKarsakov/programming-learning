@@ -1,10 +1,7 @@
 package kkkvd.operator.operatorkvd.service;
 
 import kkkvd.operator.operatorkvd.dto.ReportRequest;
-import kkkvd.operator.operatorkvd.entities.DetectionCase;
-import kkkvd.operator.operatorkvd.entities.DiagnosisGroup;
-import kkkvd.operator.operatorkvd.entities.Population;
-import kkkvd.operator.operatorkvd.entities.State;
+import kkkvd.operator.operatorkvd.entities.*;
 import kkkvd.operator.operatorkvd.repositories.*;
 import kkkvd.operator.operatorkvd.util.DoctorNameFormatter;
 import kkkvd.operator.operatorkvd.util.NameUtils;
@@ -365,17 +362,275 @@ public class ReportService {
         return rows;
     }
 
-    //todo: Сделать отчет "Подробный отчёт по заболеванию"
+    //Подробный отчёт по заболеванию
+    //Состоит из секций, каждая — отдельная таблица в Excel. Возвращает Map: ключ = название секции, значение = строки.
+    public Map<String, List<Map<String, Object>>> generateDetailedReport(ReportRequest request) {
+        List<Long> stateIds = resolveStateIds(request);
+        List<DetectionCase> allCases = fetchCases(request.getDateFrom(), request.getDateTo(), stateIds);
+        List<DetectionCase> cases = filterByDiagnosisGroup(allCases, request.getDiagnosisGroupId());
+
+        String groupCode = getDiagnosisGroupCode(request.getDiagnosisGroupId());
+        boolean isSyph = SYPHILIS_CODE.equals(groupCode);
+        boolean hasAgeSubs = GROUPS_WITH_AGE_SUBSECTIONS.contains(groupCode);
+        boolean hasProfile = GROUPS_WITH_PROFILE_SECTION.contains(groupCode);
+        int totalCount = cases.size();
+        int year = request.getDateFrom().getYear();
+        Long gId = request.getDiagnosisGroupId();
+
+        Map<String, List<Map<String, Object>>> sections = new LinkedHashMap<>();
+        //профиль врача (не у всех заболеваний)
+        if (hasProfile) {
+            sections.put("Профиль врача (Поликлиника)", buildGenderSection(cases, c -> c.getProfile().getName(), totalCount, isSyph, gId));
+        }
+
+        //Секции с опциональными подсекциями для детей/подростков
+        addSectionWithAgeSubs(sections, "Место выявления", cases, c -> c.getPlace().getName(), totalCount, isSyph, hasAgeSubs, gId);
+        addSectionWithAgeSubs(sections, "Социальная группа", cases, c -> c.getPlace().getName(), totalCount, isSyph, hasAgeSubs, gId);
+        addSectionWithAgeSubs(sections, "Категория жителя", cases, c -> c.getPlace().getName(), totalCount, isSyph, hasAgeSubs, gId);
+        addSectionWithAgeSubs(sections, "Тип населенного пункта", cases, c -> c.getPlace().getName(), totalCount, isSyph, hasAgeSubs, gId);
+        addSectionWithAgeSubs(sections, "Тип осмотра", cases, c -> c.getPlace().getName(), totalCount, isSyph, hasAgeSubs, gId);
+
+        //Район проживания
+        sections.put("Район проживания", buildDistrictSection(cases, isSyph, year, gId));
+        //TODO: Доделать отчет
+    }
 
     //Строители секций
     //Добавляет секцию + подсекции для подростков/детей (если нужно)
     private void addSectionWithAgeSubs(
-            Map<String, List<Map<String, Object>>> section,
+            Map<String, List<Map<String, Object>>> sections,
             String name, List<DetectionCase> cases,
             Function<DetectionCase, String> grouper,
-            int total, boolean isSyph, boolean hasSubs, Long gId
-    ) {
+            int total, boolean isSyph, boolean hasSubs, Long gId) {
 
+        sections.put(name,
+                buildGenderSection(cases, grouper, total, isSyph, gId));
+        if (hasSubs) {
+            var teens = filterByAge(cases, 15, 17);
+            var kids = filterByAge(cases, 0, 14);
+            sections.put(name + " Подростки 15-17 лет",
+                    buildGenderSection(teens, grouper, teens.size(), false, gId));
+            sections.put(name + " Дети 0-14 лет",
+                    buildGenderSection(kids, grouper, kids.size(), false, gId));
+        }
     }
+
+    /**
+     * Секция: стандартный формат (Муж/Жен/Всего/%)
+     * или формат Сифилиса (столбцы = МКБ-коды).
+     */
+    private List<Map<String, Object>> buildGenderSection(
+            List<DetectionCase> cases,
+            Function<DetectionCase, String> grouper,
+            int totalForPercent, boolean isSyph, Long diagGroupId) {
+
+        Map<String, List<DetectionCase>> grouped = cases.stream()
+                .collect(Collectors.groupingBy(
+                        grouper, LinkedHashMap::new, Collectors.toList()));
+        List<Map<String, Object>> rows = new ArrayList<>();
+
+        if (isSyph) {
+            // OrderByNameAsc — гарантированный порядок МКБ-кодов
+            List<Diagnosis> diags = diagnosisRepository
+                    .findByDiagnosisGroupIdOrderByNameAsc(diagGroupId);
+
+            for (var entry : grouped.entrySet()) {
+                Map<String, Object> row = new LinkedHashMap<>();
+                row.put("name", entry.getKey());
+                int rowTotal = 0;
+                for (Diagnosis d : diags) {
+                    long cnt = entry.getValue().stream()
+                            .filter(c -> c.getDiagnosis().getId().equals(d.getId()))
+                            .count();
+                    row.put(d.getName().split(" ")[0], cnt > 0 ? (int) cnt : null);
+                    rowTotal += cnt;
+                }
+                row.put("Всего", rowTotal > 0 ? rowTotal : null);
+                rows.add(row);
+            }
+            addSyphilisTotals(rows, cases, diags);
+        } else {
+            for (var entry : grouped.entrySet()) {
+                Map<String, Object> row = new LinkedHashMap<>();
+                row.put("name", entry.getKey());
+                long m = entry.getValue().stream().filter(this::isMale).count();
+                long f = entry.getValue().size() - m;
+                int t = entry.getValue().size();
+                row.put("male", m > 0 ? (int) m : null);
+                row.put("female", f > 0 ? (int) f : null);
+                row.put("total", t);
+                row.put("percent", totalForPercent > 0
+                        ? Math.round((double) t / totalForPercent * 1000.0) / 10.0
+                        : null);
+                rows.add(row);
+            }
+            Map<String, Object> itogo = new LinkedHashMap<>();
+            itogo.put("name", "ИТОГО");
+            long m = cases.stream().filter(this::isMale).count();
+            itogo.put("male", m > 0 ? (int) m : null);
+            itogo.put("female", cases.size()-m > 0 ? (int)(cases.size()-m) : null);
+            itogo.put("total", cases.size());
+            itogo.put("percent", 100);
+            rows.add(itogo);
+        }
+        return rows;
+    }
+
+    /** Итоговые строки для формата Сифилиса */
+    private void addSyphilisTotals(List<Map<String, Object>> rows,
+                                   List<DetectionCase> cases,
+                                   List<Diagnosis> diags) {
+        for (String gc : new String[]{GENDER_MALE, GENDER_FEMALE}) {
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("name", GENDER_MALE.equals(gc)
+                    ? "Всего: Мужчины" : "Всего: Женщины");
+            int rt = 0;
+            for (Diagnosis d : diags) {
+                long cnt = cases.stream()
+                        .filter(c -> c.getDiagnosis().getId().equals(d.getId())
+                                && c.getPatient().getGender().getCode().equals(gc))
+                        .count();
+                row.put(d.getName().split(" ")[0], cnt > 0 ? (int) cnt : null);
+                rt += cnt;
+            }
+            row.put("Всего", rt > 0 ? rt : null);
+            rows.add(row);
+        }
+        Map<String, Object> itogo = new LinkedHashMap<>();
+        itogo.put("name", "ИТОГО");
+        int t = 0;
+        for (Diagnosis d : diags) {
+            long cnt = cases.stream()
+                    .filter(c -> c.getDiagnosis().getId().equals(d.getId())).count();
+            itogo.put(d.getName().split(" ")[0], cnt > 0 ? (int) cnt : null);
+            t += cnt;
+        }
+        itogo.put("Всего", t > 0 ? t : null);
+        rows.add(itogo);
+    }
+
+    /** Секция "Район проживания" с подытогами город/край */
+    private List<Map<String, Object>> buildDistrictSection(
+            List<DetectionCase> cases, boolean isSyph, int year,
+            Long diagGroupId) {
+
+        Map<Long, Integer> popByState = new HashMap<>();
+        for (Population p : populationRepository.findByYear(year)) {
+            popByState.put(p.getState().getId(), p.getCountAll());
+        }
+
+        Map<String, List<DetectionCase>> byDistrict = cases.stream()
+                .collect(Collectors.groupingBy(
+                        c -> c.getState().getName(),
+                        LinkedHashMap::new, Collectors.toList()));
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        List<DetectionCase> cityCases = new ArrayList<>();
+        List<DetectionCase> regionCases = new ArrayList<>();
+
+        for (var entry : byDistrict.entrySet()) {
+            List<DetectionCase> dc = entry.getValue();
+            if (isCityDistrict(dc.get(0))) cityCases.addAll(dc);
+            else regionCases.addAll(dc);
+
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("name", entry.getKey());
+            long m = dc.stream().filter(this::isMale).count();
+            row.put("male", m > 0 ? (int) m : null);
+            row.put("female", dc.size()-m > 0 ? (int)(dc.size()-m) : null);
+            row.put("total", dc.size());
+
+            Long stId = dc.get(0).getState().getId();
+            Integer pop = popByState.get(stId);
+            row.put("per100k", pop != null && pop > 0
+                    ? Math.round((double)dc.size()*100000/pop*10.0)/10.0 : null);
+            rows.add(row);
+        }
+
+        addSubtotalRow(rows, "Итого по Красноярску", cityCases);
+        addSubtotalRow(rows, "Итого по Краю", regionCases);
+        addSubtotalRow(rows, "ИТОГО", cases);
+        return rows;
+    }
+
+    private void addSubtotalRow(List<Map<String, Object>> rows,
+                                String label, List<DetectionCase> cases) {
+        if (cases.isEmpty() && !"ИТОГО".equals(label)) return;
+        Map<String, Object> row = new LinkedHashMap<>();
+        row.put("name", label);
+        long m = cases.stream().filter(this::isMale).count();
+        row.put("male", m > 0 ? (int) m : null);
+        row.put("female", cases.size()-m > 0 ? (int)(cases.size()-m) : null);
+        row.put("total", cases.size());
+        row.put("per100k", null);
+        rows.add(row);
+    }
+
+    /** Секция "Возрастная группа" */
+    private List<Map<String, Object>> buildAgeGroupSection(
+            List<DetectionCase> cases, boolean isSyph, Long diagGroupId) {
+
+        int[][] ranges = {{0,14},{15,17},{18,19},{20,29},{30,39},{40,200}};
+        String[] names = {"0-14 лет","15-17 лет","18-19 лет",
+                "20-29 лет","30-39 лет","40 лет и старше"};
+        int totalCount = cases.size();
+        List<Diagnosis> diags = isSyph
+                ? diagnosisRepository.findByDiagnosisGroupIdOrderByNameAsc(diagGroupId)
+                : null;
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+
+        for (int i = 0; i < ranges.length; i++) {
+            List<DetectionCase> ac = filterByAge(cases, ranges[i][0], ranges[i][1]);
+            if (ac.isEmpty()) continue;
+
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("name", names[i]);
+
+            if (isSyph && diags != null) {
+                int rt = 0;
+                for (Diagnosis d : diags) {
+                    long cnt = ac.stream()
+                            .filter(c -> c.getDiagnosis().getId().equals(d.getId()))
+                            .count();
+                    row.put(d.getName().split(" ")[0], cnt > 0 ? (int) cnt : null);
+                    rt += cnt;
+                }
+                row.put("Всего", rt > 0 ? rt : null);
+            } else {
+                long m = ac.stream().filter(this::isMale).count();
+                row.put("male", m > 0 ? (int) m : null);
+                row.put("female", ac.size()-m > 0 ? (int)(ac.size()-m) : null);
+                row.put("total", ac.size());
+                row.put("percent", totalCount > 0
+                        ? Math.round((double)ac.size()/totalCount*1000.0)/10.0 : null);
+            }
+            rows.add(row);
+        }
+
+        // ИТОГО
+        Map<String, Object> itogo = new LinkedHashMap<>();
+        itogo.put("name", "ИТОГО");
+        if (isSyph && diags != null) {
+            int t = 0;
+            for (Diagnosis d : diags) {
+                long cnt = cases.stream()
+                        .filter(c -> c.getDiagnosis().getId().equals(d.getId())).count();
+                itogo.put(d.getName().split(" ")[0], cnt > 0 ? (int) cnt : null);
+                t += cnt;
+            }
+            itogo.put("Всего", t > 0 ? t : null);
+        } else {
+            long m = cases.stream().filter(this::isMale).count();
+            itogo.put("male", m > 0 ? (int) m : null);
+            itogo.put("female", cases.size()-m > 0 ? (int)(cases.size()-m) : null);
+            itogo.put("total", cases.size());
+            itogo.put("percent", 100);
+        }
+        rows.add(itogo);
+        return rows;
+    }
+
+
 
 }
