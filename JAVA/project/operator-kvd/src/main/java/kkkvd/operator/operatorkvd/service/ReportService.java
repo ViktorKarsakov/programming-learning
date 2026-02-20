@@ -392,7 +392,14 @@ public class ReportService {
 
         //Район проживания
         sections.put("Район проживания", buildDistrictSection(cases, isSyph, year, gId));
-        //TODO: Доделать отчет
+        if (hasAgeSubs) {
+            var teens = filterByAge(cases, 15, 17);
+            var kids = filterByAge(cases, 0, 14);
+            sections.put("Район проживания Подростки 15-17 лет", buildDistrictSection(teens, false, year, gId));
+            sections.put("Район проживания Дети 0-14 лет", buildDistrictSection(kids, false, year, gId));
+        }
+        sections.put("Возрастная группа", buildAgeGroupSection(cases, isSyph, gId));
+        return sections;
     }
 
     //Строители секций
