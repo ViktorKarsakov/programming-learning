@@ -78,7 +78,7 @@ public class ReportService {
 
     //Проверка ДДУ по двум кодам
     private boolean isDdu(DetectionCase dc) {
-        return DDU_CODES.contains(dc.getCitizenType().getCode());
+        return DDU_CODES.contains(dc.getSocialGroup().getCode());
     }
 
     //Относится ли район к Красноярску
@@ -170,7 +170,7 @@ public class ReportService {
 
                 if (age <= 17) under17++;
                 if (age <= 14) under14++;
-                if (age <= 1) under1++;
+                if (age < 1) under1++;
                 if (age >= 1 && age <= 2) age1to2++;
                 if (age >= 3 && age <= 6) age3to6++;
                 if (age >= 3 && age <= 6 && isDdu(c)) age3to6ddu++;
@@ -283,7 +283,7 @@ public class ReportService {
 
     //Сведения о заболеваниях ИППП. Строки = конкретный диагноз + пол
     //Столбцы: Диагноз | Пол | Кол-во | возрастные группы | сельские
-    public List<Map<String, Object>> generateIpppDetailReport(ReportRequest request) {
+    public List<Map<String, Object>> generateIpppDetailsReport(ReportRequest request) {
         List<Long> stateIds = resolveStateIds(request);
         List<DetectionCase> cases = fetchCases(request.getDateFrom(), request.getDateTo(), stateIds);
 
@@ -341,7 +341,7 @@ public class ReportService {
 
     //Список больных по врачам и району
     //Плоский список: Пациент | Дата рождения | Диагноз | Район | Врач
-    public List<Map<String, Object>> generateDoctorPatientReport(ReportRequest request) {
+    public List<Map<String, Object>> generateDoctorPatientsReport(ReportRequest request) {
         List<Long> stateIds = resolveStateIds(request);
         List<DetectionCase> cases = fetchCases(request.getDateFrom(), request.getDateTo(), stateIds);
 
@@ -385,10 +385,10 @@ public class ReportService {
 
         //Секции с опциональными подсекциями для детей/подростков
         addSectionWithAgeSubs(sections, "Место выявления", cases, c -> c.getPlace().getName(), totalCount, isSyph, hasAgeSubs, gId);
-        addSectionWithAgeSubs(sections, "Социальная группа", cases, c -> c.getPlace().getName(), totalCount, isSyph, hasAgeSubs, gId);
-        addSectionWithAgeSubs(sections, "Категория жителя", cases, c -> c.getPlace().getName(), totalCount, isSyph, hasAgeSubs, gId);
-        addSectionWithAgeSubs(sections, "Тип населенного пункта", cases, c -> c.getPlace().getName(), totalCount, isSyph, hasAgeSubs, gId);
-        addSectionWithAgeSubs(sections, "Тип осмотра", cases, c -> c.getPlace().getName(), totalCount, isSyph, hasAgeSubs, gId);
+        addSectionWithAgeSubs(sections, "Социальная группа", cases, c -> c.getSocialGroup().getName(), totalCount, isSyph, hasAgeSubs, gId);
+        addSectionWithAgeSubs(sections, "Категория жителя", cases, c -> c.getCitizenCategory().getName(), totalCount, isSyph, hasAgeSubs, gId);
+        addSectionWithAgeSubs(sections, "Тип населенного пункта", cases, c -> c.getCitizenType().getName(), totalCount, isSyph, hasAgeSubs, gId);
+        addSectionWithAgeSubs(sections, "Тип осмотра", cases, c -> c.getInspection().getName(), totalCount, isSyph, hasAgeSubs, gId);
 
         //Район проживания
         sections.put("Район проживания", buildDistrictSection(cases, isSyph, year, gId));

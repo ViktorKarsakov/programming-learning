@@ -65,6 +65,6 @@ public interface DetectionCaseRepository extends JpaRepository<DetectionCase, Lo
             "AND dc.state.id IN :stateIds")
     List<DetectionCase> findAllForReports(
             @Param("dateFrom")LocalDate dateFrom,
-            @Param("DateTo") LocalDate dateTo,
+            @Param("dateTo") LocalDate dateTo,
             @Param("stateIds") List<Long> stateIds);
 }
