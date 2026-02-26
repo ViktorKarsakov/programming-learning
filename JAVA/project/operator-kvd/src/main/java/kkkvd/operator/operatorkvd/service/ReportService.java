@@ -104,7 +104,7 @@ public class ReportService {
     }
 
     //Имя группы диагнозов для заголовков excel
-    private String getDiagnosisGroupName(Long groupId) {
+    public String getDiagnosisGroupName(Long groupId) {
         return diagnosisGroupRepository.findById(groupId)
                 .map(DiagnosisGroup::getName).orElse("Неизвестно");
     }
@@ -119,6 +119,8 @@ public class ReportService {
     public boolean isSyphilisGroup(Long groupId) {
         return SYPHILIS_CODE.equals(getDiagnosisGroupCode(groupId));
     }
+
+
 
     //Отображаемое имя для заголовков столбцов
     private Map<String, String> buildGroupCodeToNameMap() {
