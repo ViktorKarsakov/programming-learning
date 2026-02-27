@@ -296,9 +296,24 @@ async function generateReport() {
         // Здесь НЕ используем fetchApi из common.js,
         // потому что fetchApi ожидает JSON-ответ (response.json()),
         // а контроллер возвращает бинарный XLSX-файл (response.blob()).
+        // Собираем заголовки. Нужен CSRF-токен, потому что это POST-запрос.
+        // Здесь мы НЕ используем fetchApi из common.js, потому что fetchApi
+        // ожидает JSON-ответ (response.json()), а контроллер возвращает
+        // бинарный XLSX-файл (response.blob()).
+        const headers = {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        };
+
+        // Добавляем CSRF-токен (функция getCsrfToken из common.js)
+        const csrfToken = getCsrfToken();
+        if (csrfToken) {
+            headers['X-XSRF-TOKEN'] = csrfToken;
+        }
+
         const response = await fetch('/api/reports/generate', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: headers,
             body: JSON.stringify(requestBody)
         });
 

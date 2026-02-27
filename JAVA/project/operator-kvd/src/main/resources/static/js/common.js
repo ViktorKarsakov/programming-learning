@@ -1,22 +1,111 @@
 /**
  * KVD Application - Common Utilities
+ *
+ * Этот файл подключается на КАЖДОЙ странице (кроме login.html).
+ * Содержит общие функции: HTTP-запросы, уведомления, модалки, сайдбар.
+ *
+ * ИЗМЕНЕНИЯ для Spring Security:
+ * ─────────────────────────────
+ * 1) Добавлена функция getCsrfToken() — читает CSRF-токен из cookie.
+ *    Токен нужно отправлять с каждым POST/PUT/DELETE запросом,
+ *    иначе Spring Security отклонит запрос (защита от CSRF-атак).
+ *
+ * 2) fetchApi() обновлён: добавляет CSRF-заголовок и обрабатывает 401.
+ *    401 Unauthorized = сессия истекла → перенаправляем на логин.
+ *
+ * 3) Добавлена функция loadCurrentUser() — загружает имя и роль
+ *    текущего пользователя для отображения в сайдбаре.
+ *
+ * 4) Добавлена функция logout() — отправляет POST /logout.
  */
 
 const API_BASE = '/api';
 
+// ==================== CSRF-ТОКЕН ====================
+
+/**
+ * Читает CSRF-токен из cookie "XSRF-TOKEN".
+ *
+ * Как работает CSRF-защита в нашем приложении:
+ * ─────────────────────────────────────────────
+ * 1) Spring Security при каждом ответе ставит cookie "XSRF-TOKEN" со случайным значением.
+ * 2) Наш JavaScript читает это значение из cookie.
+ * 3) При каждом POST/PUT/DELETE запросе мы добавляем заголовок "X-XSRF-TOKEN" с этим значением.
+ * 4) Spring Security сравнивает значение cookie и заголовка — если совпадают, запрос легитимный.
+ *
+ * Почему это работает:
+ * Вредоносный сайт может заставить браузер ОТПРАВИТЬ cookie (автоматически),
+ * но НЕ МОЖЕТ ПРОЧИТАТЬ cookie другого домена (Same-Origin Policy).
+ * Поэтому вредоносный сайт не сможет добавить правильный заголовок X-XSRF-TOKEN.
+ *
+ * @returns {string|null} — значение CSRF-токена или null, если cookie не найдена
+ */
+function getCsrfToken() {
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'XSRF-TOKEN') {
+            // decodeURIComponent — потому что cookie-значение может быть URL-encoded
+            return decodeURIComponent(value);
+        }
+    }
+    return null;
+}
+
 // ==================== HTTP UTILS ====================
 
+/**
+ * Базовая функция для всех HTTP-запросов к API.
+ *
+ * Что делает:
+ * 1) Добавляет Content-Type: application/json
+ * 2) Добавляет CSRF-токен для POST/PUT/DELETE (Spring Security требует)
+ * 3) Проверяет статус ответа
+ * 4) При 401 (сессия истекла) — перенаправляет на страницу входа
+ * 5) Парсит JSON-ответ
+ */
 async function fetchApi(endpoint, options = {}) {
-    const defaultOptions = {
-        headers: {
-            'Content-Type': 'application/json',
-        },
+
+    // Базовые заголовки
+    const headers = {
+        'Content-Type': 'application/json',
+        // X-Requested-With — маркер AJAX-запроса.
+        // SecurityConfig проверяет этот заголовок, чтобы отличать AJAX от обычных переходов.
+        // Для AJAX возвращает 401 (JavaScript обработает), для обычных — редирект на login.
+        'X-Requested-With': 'XMLHttpRequest',
+        // Если в options переданы дополнительные заголовки — они дополнят/перезапишут эти
+        ...(options.headers || {})
     };
 
+    // Для запросов, ИЗМЕНЯЮЩИХ данные (POST, PUT, DELETE),
+    // добавляем CSRF-токен в заголовок.
+    // GET-запросы не нуждаются в CSRF — они не изменяют данные.
+    const method = (options.method || 'GET').toUpperCase();
+    if (method !== 'GET') {
+        const csrfToken = getCsrfToken();
+        if (csrfToken) {
+            headers['X-XSRF-TOKEN'] = csrfToken;
+        }
+    }
+
     const response = await fetch(`${API_BASE}${endpoint}`, {
-        ...defaultOptions,
         ...options,
+        headers: headers,
     });
+
+    // ── Обработка 401 Unauthorized ──
+    // Сессия истекла (пользователь давно не работал) или не авторизован.
+    // Перенаправляем на страницу входа.
+    if (response.status === 401) {
+        window.location.href = '/login.html';
+        return;
+    }
+
+    // ── Обработка 403 Forbidden ──
+    // Пользователь авторизован, но нет прав (оператор пытается удалить справочник).
+    if (response.status === 403) {
+        throw new Error('Недостаточно прав для выполнения операции');
+    }
 
     if (!response.ok) {
         const error = await response.json().catch(() => ({ message: 'Ошибка сервера' }));
@@ -53,6 +142,71 @@ async function del(endpoint) {
     return fetchApi(endpoint, {
         method: 'DELETE',
     });
+}
+
+// ==================== АУТЕНТИФИКАЦИЯ ====================
+
+/**
+ * Загружает информацию о текущем пользователе и отображает в сайдбаре.
+ *
+ * Вызывается при загрузке каждой страницы (автоматически — см. вызов внизу этого файла).
+ *
+ * Запрашивает GET /api/auth/me → { username: "admin", role: "ADMIN" }
+ *
+ * Обновляет:
+ * 1) Имя пользователя в сайдбаре (элемент #currentUserName)
+ * 2) Глобальную переменную currentUserRole — для проверки роли в других JS-файлах
+ */
+let currentUserRole = null;
+
+async function loadCurrentUser() {
+    try {
+        const user = await get('/auth/me');
+
+        // Показываем имя в сайдбаре
+        const nameEl = document.getElementById('currentUserName');
+        if (nameEl) {
+            nameEl.textContent = user.username;
+        }
+
+        // Сохраняем роль глобально.
+        // Другие скрипты (dictionaries.js) смогут проверять:
+        //   if (currentUserRole !== 'ADMIN') { скрыть кнопку "Удалить" }
+        currentUserRole = user.role;
+
+    } catch (error) {
+        console.error('Не удалось загрузить пользователя:', error);
+    }
+}
+
+/**
+ * Выход из системы.
+ *
+ * Отправляет POST /logout (Spring Security обрабатывает автоматически):
+ * 1) Удаляет серверную сессию
+ * 2) Удаляет cookie JSESSIONID
+ * 3) Возвращает редирект на /login.html?logout
+ *
+ * Мы используем fetch вместо обычной формы, потому что:
+ * - Нужен CSRF-токен в заголовке
+ * - POST /logout (Spring Security по умолчанию требует POST, не GET)
+ */
+async function logout() {
+    try {
+        const csrfToken = getCsrfToken();
+        const headers = {};
+        if (csrfToken) {
+            headers['X-XSRF-TOKEN'] = csrfToken;
+        }
+
+        await fetch('/logout', {
+            method: 'POST',
+            headers: headers
+        });
+    } catch (e) {
+        // Даже при ошибке сети — отправляем на login
+    }
+    window.location.href = '/login.html?logout';
 }
 
 // ==================== TOAST NOTIFICATIONS ====================
@@ -310,3 +464,15 @@ function showEmptyState(containerId, message = 'Нет данных') {
         `;
     }
 }
+
+// ==================== АВТОЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ ====================
+
+/**
+ * При загрузке любой страницы (кроме login) автоматически загружаем
+ * информацию о текущем пользователе.
+ *
+ * Если пользователь не авторизован — fetchApi получит 401 → редирект на login.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    loadCurrentUser();
+});
