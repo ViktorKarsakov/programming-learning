@@ -32,6 +32,8 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/login.html").permitAll()
                         // CSS, JS, шрифты — доступны ВСЕМ (нужны для отрисовки login-страницы)
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                        // Управление пользователями — только ADMIN
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
                         // Все остальные запросы — только для авторизованных пользователей
                         .anyRequest().authenticated()
                 )

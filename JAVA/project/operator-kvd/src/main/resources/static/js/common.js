@@ -174,6 +174,12 @@ async function loadCurrentUser() {
         //   if (currentUserRole !== 'ADMIN') { скрыть кнопку "Удалить" }
         currentUserRole = user.role;
 
+        // Показываем пункт "Пользователи" в сайдбаре только для ADMIN
+        const navUsers = document.getElementById('navUsers');
+        if (navUsers) {
+            navUsers.style.display = (user.role === 'ADMIN') ? '' : 'none';
+        }
+
     } catch (error) {
         console.error('Не удалось загрузить пользователя:', error);
     }
