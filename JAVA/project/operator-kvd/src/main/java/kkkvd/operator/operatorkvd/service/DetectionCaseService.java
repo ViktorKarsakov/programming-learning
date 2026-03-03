@@ -40,10 +40,11 @@ public class DetectionCaseService {
     private final CitizenTypeRepository citizenTypeRepository;
     private final SocialGroupRepository socialGroupRepository;
     private final LaboratoryTestTypeRepository laboratoryTestTypeRepository;
+    private final UserRepository userRepository;
 
     //Новый пациент
     @Transactional
-    public DetectionCase create(CreateDetectionCaseRequest request) {
+    public DetectionCase create(CreateDetectionCaseRequest request, String username) {
         Patient patient = findOrCreatePatient(request);
         CreateCaseForPatientRequest caseRequest = new CreateCaseForPatientRequest();
         caseRequest.setDiagnosisId(request.getDiagnosisId());
@@ -60,7 +61,7 @@ public class DetectionCaseService {
         caseRequest.setIsContact(request.getIsContact());
         caseRequest.setLabTestIds(request.getLabTestIds());
 
-        return createCaseInternal(patient, caseRequest);
+        return createCaseInternal(patient, caseRequest, username);
     }
 
     private Patient findOrCreatePatient(CreateDetectionCaseRequest request) {
@@ -91,8 +92,8 @@ public class DetectionCaseService {
     }
 
     @Transactional
-    public DetectionCaseResponse createForExistingPatient(Patient patient, CreateCaseForPatientRequest request) {
-        DetectionCase savedCase = createCaseInternal(patient, request);
+    public DetectionCaseResponse createForExistingPatient(Patient patient, CreateCaseForPatientRequest request, String username) {
+        DetectionCase savedCase = createCaseInternal(patient, request, username);
         return toResponse(savedCase);
     }
 
@@ -101,7 +102,15 @@ public class DetectionCaseService {
         DetectionCase dc = detectionCaseRepository.findById(caseId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Случай не найден"));
         List<RefDto> labTests = getLabTestsAsRefDto(dc.getId());
-        return CaseDetailMapper.toDetailDto(dc, labTests);
+        CaseDetailDto dto = CaseDetailMapper.toDetailDto(dc, labTests);
+
+        if (dc.getCreatedBy() != null) {
+            String fullName = userRepository.findByUsername(dc.getCreatedBy())
+                    .map(User::getFullName)
+                    .orElse(dc.getCreatedBy());
+            dto.setCreatedByUsername(fullName);
+        }
+        return dto;
     }
 
     @Transactional
@@ -161,9 +170,12 @@ public class DetectionCaseService {
         dc.setIsContact(request.getIsContact() != null ? request.getIsContact() : false);
     }
 
-    private DetectionCase createCaseInternal(Patient patient, CreateCaseForPatientRequest request) {
+    private DetectionCase createCaseInternal(Patient patient, CreateCaseForPatientRequest request, String username) {
         DetectionCase detectionCase = new DetectionCase();
         detectionCase.setPatient(patient);
+
+        detectionCase.setCreatedBy(username);
+
         fillCaseFromRequest(detectionCase, request);
 
         DetectionCase savedCase = detectionCaseRepository.save(detectionCase);

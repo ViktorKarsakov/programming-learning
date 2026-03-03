@@ -31,4 +31,6 @@ public class CaseSummaryDto {
     private RefDto socialGroup;
 
     private Boolean isContact;
+
+    private String createdByUsername;
 }

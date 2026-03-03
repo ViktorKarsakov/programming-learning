@@ -12,6 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,12 +25,22 @@ public class PatientService {
     private final DetectionCaseRepository detectionCaseRepository;
     private final GenderRepository genderRepository;
     private final DetectionCaseService detectionCaseService;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public PatientDetailResponse getPatientWithCases(Long patientId) {
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пациент не найден"));
         List<DetectionCase> cases = detectionCaseRepository.findByPatientIdOrderByDiagnosisDateDesc(patientId);
+
+        //Собираем все уникальные логины авторов из случаев
+        Set<String> usernames = cases.stream()
+                .map(DetectionCase::getCreatedBy)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        Map<String, String> userFullNames = usernames.isEmpty() ? Map.of()
+                : userRepository.findByUsernameIn(usernames).stream().collect(Collectors.toMap(User::getUsername, User::getFullName));
 
         return PatientDetailResponse.builder()
                 .id(patient.getId())
@@ -36,7 +50,7 @@ public class PatientService {
                 .birthDate(patient.getBirthDate())
                 .address(patient.getAddress())
                 .gender(RefDtoMapper.toRef(patient.getGender()))
-                .cases(cases.stream().map(this::toCaseSummaryDto).toList())
+                .cases(cases.stream().map(c -> toCaseSummaryDto(c, userFullNames)).toList())
                 .build();
     }
 
@@ -77,15 +91,15 @@ public class PatientService {
     }
 
     @Transactional
-    public DetectionCaseResponse addCaseToPatient(Long patientId, CreateCaseForPatientRequest request) {
+    public DetectionCaseResponse addCaseToPatient(Long patientId, CreateCaseForPatientRequest request, String username) {
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пациент не найден"));
 
-        return detectionCaseService.createForExistingPatient(patient, request);
+        return detectionCaseService.createForExistingPatient(patient, request, username);
     }
 
 
-    private CaseSummaryDto toCaseSummaryDto(DetectionCase detectionCase) {
+    private CaseSummaryDto toCaseSummaryDto(DetectionCase detectionCase, Map<String, String> userFullNames) {
         return CaseSummaryDto.builder()
                 .id(detectionCase.getId())
                 .diagnosisDate(detectionCase.getDiagnosisDate())
@@ -101,6 +115,8 @@ public class PatientService {
                 .citizenType(RefDtoMapper.toRef(detectionCase.getCitizenType()))
                 .socialGroup(RefDtoMapper.toRef(detectionCase.getSocialGroup()))
                 .isContact(detectionCase.getIsContact())
+                .createdByUsername(detectionCase.getCreatedBy() != null
+                        ? userFullNames.getOrDefault(detectionCase.getCreatedBy(), detectionCase.getCreatedBy()) : null)
                 .build();
     }
 }

@@ -2,6 +2,7 @@ package kkkvd.operator.operatorkvd.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,6 +35,10 @@ public class SecurityConfig {
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         // Управление пользователями — только ADMIN
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        //Справочники: чтение — все авторизованные, изменение — только ADMIN
+                        .requestMatchers(HttpMethod.POST, "/api/dictionaries/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/dictionaries/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/dictionaries/**").hasRole("ADMIN")
                         // Все остальные запросы — только для авторизованных пользователей
                         .anyRequest().authenticated()
                 )

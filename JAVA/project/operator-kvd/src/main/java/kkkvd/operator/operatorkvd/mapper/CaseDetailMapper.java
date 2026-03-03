@@ -31,6 +31,7 @@ public final class CaseDetailMapper {
                 .socialGroup(RefDtoMapper.toRef(dc.getSocialGroup()))
                 .isContact(dc.getIsContact())
                 .labTests(labTests)
+                .createdByUsername(dc.getCreatedBy())
                 .build();
     }
 }

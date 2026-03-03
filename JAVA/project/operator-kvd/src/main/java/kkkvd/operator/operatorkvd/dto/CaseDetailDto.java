@@ -32,4 +32,5 @@ public class CaseDetailDto {
     private RefDto socialGroup;
     private Boolean isContact;
     private List<RefDto> labTests;
+    private String createdByUsername;
 }

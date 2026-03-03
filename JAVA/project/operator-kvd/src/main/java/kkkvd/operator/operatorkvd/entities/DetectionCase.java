@@ -77,6 +77,9 @@ public class DetectionCase {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "created_by")
+    private String createdBy;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

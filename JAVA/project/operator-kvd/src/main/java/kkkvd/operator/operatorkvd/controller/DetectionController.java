@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +21,8 @@ public class DetectionController {
     private final DetectionCaseService detectionCaseService;
 
     @PostMapping
-    public ResponseEntity<DetectionCaseResponse> create(@Valid @RequestBody CreateDetectionCaseRequest request) {
-        DetectionCase saved = detectionCaseService.create(request);
+    public ResponseEntity<DetectionCaseResponse> create(@Valid @RequestBody CreateDetectionCaseRequest request, Authentication authentication) {
+        DetectionCase saved = detectionCaseService.create(request, authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(detectionCaseService.toResponse(saved));
     }
 

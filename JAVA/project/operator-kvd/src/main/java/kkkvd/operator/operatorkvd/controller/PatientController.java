@@ -10,6 +10,7 @@ import kkkvd.operator.operatorkvd.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,8 +38,8 @@ public class PatientController {
     }
 
     @PostMapping("/{id}/cases")
-    public ResponseEntity<DetectionCaseResponse> addCaseToPatient(@PathVariable Long id, @RequestBody CreateCaseForPatientRequest request) {
-        DetectionCaseResponse response = patientService.addCaseToPatient(id, request);
+    public ResponseEntity<DetectionCaseResponse> addCaseToPatient(@PathVariable Long id, @RequestBody CreateCaseForPatientRequest request, Authentication authentication) {
+        DetectionCaseResponse response = patientService.addCaseToPatient(id, request, authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
