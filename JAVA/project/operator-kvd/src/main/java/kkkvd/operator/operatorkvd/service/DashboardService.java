@@ -1,0 +1,49 @@
+package kkkvd.operator.operatorkvd.service;
+
+import kkkvd.operator.operatorkvd.repositories.DetectionCaseRepository;
+import kkkvd.operator.operatorkvd.repositories.PatientRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+//Сервис для главной страницы (дашборда)
+@Service
+@RequiredArgsConstructor
+public class DashboardService {
+    private final PatientRepository patientRepository;
+    private final DetectionCaseRepository caseRepository;
+
+    //Собирает всю статистику для дашборда одним вызовом
+    public Map<String, Object> getStats() {
+        Map<String, Object> stats = new LinkedHashMap<>();
+
+        //Общие счётчики
+        stats.put("totalPatients", patientRepository.count());
+        stats.put("totalCases", caseRepository.count());
+        //Случаи за текущий месяц
+        LocalDate now = LocalDate.now();
+        LocalDate monthStart = now.withDayOfMonth(1);
+        stats.put("casesThisMonth", caseRepository.countByDiagnosisGroupBetween(monthStart, now));
+        //Случаи за текущий год
+        LocalDate yearStart = now.withDayOfYear(1);
+        stats.put("casesThisMonth", caseRepository.countByDiagnosisGroupBetween(yearStart, now));
+
+        //Распределение по группам диагнозов (за текущий год)
+        List<Object[]> byGroup = caseRepository.countByDiagnosisGroupBetween(yearStart, now);
+        List<Map<String, Object>> distribution = byGroup.stream()
+                .map(row -> {
+                    Map<String, Object> item = new LinkedHashMap<>();
+                    item.put("name", row[0]);
+                    item.put("count", row[1]);
+                    return item;
+                })
+                .toList();
+        stats.put("diagnosisDistribution", distribution);
+        return stats;
+    }
+}

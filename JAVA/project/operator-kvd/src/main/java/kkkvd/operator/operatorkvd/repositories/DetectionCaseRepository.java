@@ -67,4 +67,16 @@ public interface DetectionCaseRepository extends JpaRepository<DetectionCase, Lo
             @Param("dateFrom")LocalDate dateFrom,
             @Param("dateTo") LocalDate dateTo,
             @Param("stateIds") List<Long> stateIds);
+
+    long countByDiagnosisDateBetween(LocalDateTime from, LocalDateTime to);
+
+    List<DetectionCase> findTop10ByOrderByCreatedAtDesc();
+
+    @Query("SELECT dg.name, COUNT(dc) FROM DetectionCase dc " +
+            "JOIN dc.diagnosis d JOIN d.diagnosisGroup dg " +
+            "WHERE dc.diagnosisDate BETWEEN :dateFrom AND :dateTo " +
+            "GROUP BY dg.name ORDER BY COUNT(dc) DESC")
+    List<Object[]> countByDiagnosisGroupBetween(
+            @Param("dateFrom") LocalDate from,
+            @Param("dateTo") LocalDate to);
 }

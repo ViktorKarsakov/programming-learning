@@ -238,6 +238,7 @@ async function loadDictionary(dictKey) {
     }
     
     updateButtons();
+    applyDictRoleRestrictions();
 }
 
 function renderTableHeaders(columns) {
@@ -493,4 +494,18 @@ async function deleteSelected() {
 
 function closeDictModal() {
     closeModal('dictModal');
+}
+
+
+/**
+ * Скрываем кнопки «Добавить/Редактировать/Удалить» для оператора.
+ * Оператор может только СМОТРЕТЬ справочники (GET-запросы).
+ * Изменять справочники (POST/PUT/DELETE) может только админ.
+ * Двойная защита: бэкенд вернёт 403, фронт не покажет кнопки.
+ */
+function applyDictRoleRestrictions() {
+    const actionsDiv = document.getElementById('dictActionButtons');
+    if (actionsDiv && currentUserRole !== 'ADMIN') {
+        actionsDiv.style.display = 'none';
+    }
 }

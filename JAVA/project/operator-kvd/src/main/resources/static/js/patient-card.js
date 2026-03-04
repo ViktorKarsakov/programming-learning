@@ -229,6 +229,7 @@ function renderCases() {
             </div>
             <div class="case-footer">
                 <span>Дата учёта: ${formatDateTime(c.createdAt)}</span>
+                <span style="margin-left: 16px;">Оператор: ${escapeHtml(c.createdByUsername || '—')}</span>
             </div>
         </div>
     `).join('');
@@ -259,6 +260,9 @@ function openEditPatientModal() {
     document.getElementById('editAddress').value = p.address || '';
     
     openModal('editPatientModal');
+    
+    // Подсказки адреса через DaData
+    initAddressAutocomplete('editAddress');
 }
 
 async function savePatient() {

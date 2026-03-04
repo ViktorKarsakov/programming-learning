@@ -16,6 +16,9 @@ async function initPatientForm() {
     
     // Загружаем лабораторные тесты
     await loadLabTests();
+    
+    // Подсказки адреса через DaData
+    initAddressAutocomplete('address');
 }
 
 async function loadAllDictionaries() {
