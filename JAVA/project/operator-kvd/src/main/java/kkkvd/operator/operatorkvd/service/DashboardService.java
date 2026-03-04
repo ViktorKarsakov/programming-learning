@@ -28,10 +28,10 @@ public class DashboardService {
         //Случаи за текущий месяц
         LocalDate now = LocalDate.now();
         LocalDate monthStart = now.withDayOfMonth(1);
-        stats.put("casesThisMonth", caseRepository.countByDiagnosisGroupBetween(monthStart, now));
+        stats.put("casesThisMonth", caseRepository.countByDiagnosisDateBetween(monthStart, now));
         //Случаи за текущий год
         LocalDate yearStart = now.withDayOfYear(1);
-        stats.put("casesThisMonth", caseRepository.countByDiagnosisGroupBetween(yearStart, now));
+        stats.put("casesThisYear", caseRepository.countByDiagnosisDateBetween(yearStart, now));
 
         //Распределение по группам диагнозов (за текущий год)
         List<Object[]> byGroup = caseRepository.countByDiagnosisGroupBetween(yearStart, now);
