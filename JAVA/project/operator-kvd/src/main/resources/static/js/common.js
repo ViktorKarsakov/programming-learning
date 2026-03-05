@@ -180,6 +180,12 @@ async function loadCurrentUser() {
             navUsers.style.display = (user.role === 'ADMIN') ? '' : 'none';
         }
 
+        // Показываем пункт "Журнал действий" в сайдбаре только для ADMIN
+        const navAuditLog = document.getElementById('navAuditLog');
+        if (navAuditLog) {
+            navAuditLog.style.display = (user.role === 'ADMIN') ? '' : 'none';
+        }
+
     } catch (error) {
         console.error('Не удалось загрузить пользователя:', error);
     }

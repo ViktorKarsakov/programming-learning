@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Пользователи - КВД</title>
+    <title>Настройки - КВД</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -55,7 +55,7 @@
             <a href="audit-log.html" id="navAuditLog" style="display:none;">
                 <span class="icon">📜</span> Журнал действий
             </a>
-            <a href="settings.html">
+            <a href="settings.html" class="active">
                 <span class="icon">⚙️</span> Настройки
             </a>
         </nav>
@@ -74,94 +74,71 @@
     <!-- MAIN CONTENT -->
     <main class="content">
         <div class="page-header">
-            <h1 class="page-title">Управление пользователями</h1>
-            <button class="btn btn-primary" onclick="openCreateModal()">+ Новый пользователь</button>
+            <h1 class="page-title">Настройки</h1>
         </div>
 
-        <!-- Таблица пользователей -->
-        <div class="card">
-            <table class="data-table" id="usersTable">
-                <thead>
-                    <tr>
-                        <th>Логин</th>
-                        <th>ФИО</th>
-                        <th>Роль</th>
-                        <th>Статус</th>
-                        <th>Создан</th>
-                        <th>Действия</th>
-                    </tr>
-                </thead>
-                <tbody id="usersTableBody">
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Модал: создание пользователя -->
-        <div class="modal-overlay" id="createUserModal">
-            <div class="modal">
-                <div class="modal-header">
-                    <h2>Новый пользователь</h2>
-                    <button class="modal-close" onclick="closeModal('createUserModal')">&times;</button>
+        <!-- Информация о пользователе -->
+        <section class="card">
+            <h2 class="card-title">👤 Профиль</h2>
+            <div class="settings-info">
+                <div class="settings-info-row">
+                    <span class="settings-label">Логин:</span>
+                    <span class="settings-value" id="settingsUsername">—</span>
                 </div>
-                <div class="modal-body">
-                    <form id="createUserForm">
-                        <div class="form-group">
-                            <label>Логин *</label>
-                            <input type="text" name="username" required placeholder="Например: ivanov">
-                        </div>
-                        <div class="form-group">
-                            <label>Пароль *</label>
-                            <input type="password" name="password" required placeholder="Минимум 4 символа">
-                        </div>
-                        <div class="form-group">
-                            <label>ФИО *</label>
-                            <input type="text" name="fullName" required placeholder="Иванов Иван Викторович">
-                        </div>
-                        <div class="form-group">
-                            <label>Роль *</label>
-                            <select name="role" required>
-                                <option value="OPERATOR">Оператор</option>
-                                <option value="ADMIN">Администратор</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn" onclick="closeModal('createUserModal')">Отмена</button>
-                    <button class="btn btn-primary" onclick="createUser()">Создать</button>
+                <div class="settings-info-row">
+                    <span class="settings-label">Роль:</span>
+                    <span class="settings-value" id="settingsRole">—</span>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Модал: сброс пароля -->
-        <div class="modal-overlay" id="resetPasswordModal">
-            <div class="modal">
-                <div class="modal-header">
-                    <h2>Сброс пароля</h2>
-                    <button class="modal-close" onclick="closeModal('resetPasswordModal')">&times;</button>
+        <!-- Смена пароля -->
+        <section class="card" style="margin-top: 20px;">
+            <h2 class="card-title">🔒 Смена пароля</h2>
+
+            <div class="settings-form">
+                <div class="form-group">
+                    <label class="required">Текущий пароль</label>
+                    <input type="password" id="oldPassword" placeholder="Введите текущий пароль" autocomplete="current-password">
                 </div>
-                <div class="modal-body">
-                    <p id="resetPasswordInfo" style="margin-bottom:16px; color:#6b7280;"></p>
-                    <form id="resetPasswordForm">
-                        <input type="hidden" name="userId" id="resetUserId">
-                        <div class="form-group">
-                            <label>Новый пароль *</label>
-                            <input type="password" name="newPassword" required placeholder="Минимум 4 символа">
-                        </div>
-                    </form>
+                <div class="form-group">
+                    <label class="required">Новый пароль</label>
+                    <input type="password" id="newPassword" placeholder="Введите новый пароль" autocomplete="new-password">
                 </div>
-                <div class="modal-footer">
-                    <button class="btn" onclick="closeModal('resetPasswordModal')">Отмена</button>
-                    <button class="btn btn-primary" onclick="resetPassword()">Сбросить</button>
+                <div class="form-group">
+                    <label class="required">Повторите новый пароль</label>
+                    <input type="password" id="confirmPassword" placeholder="Повторите новый пароль" autocomplete="new-password">
+                </div>
+                <div style="margin-top: 16px;">
+                    <button class="btn btn-success" onclick="changePassword()">Сменить пароль</button>
                 </div>
             </div>
-        </div>
+        </section>
+
+        <!-- Информация о системе (видна всем) -->
+        <section class="card" style="margin-top: 20px;">
+            <h2 class="card-title">ℹ️ О системе</h2>
+            <div class="settings-info">
+                <div class="settings-info-row">
+                    <span class="settings-label">Название:</span>
+                    <span class="settings-value">КВД — Информационная система</span>
+                </div>
+                <div class="settings-info-row">
+                    <span class="settings-label">Версия:</span>
+                    <span class="settings-value">1.0.0</span>
+                </div>
+                <div class="settings-info-row">
+                    <span class="settings-label">Платформа:</span>
+                    <span class="settings-value">Spring Boot + PostgreSQL</span>
+                </div>
+            </div>
+        </section>
 
     </main>
 </div>
 
 <script src="js/common.js"></script>
-<script src="js/users.js"></script>
+<script src="js/settings.js"></script>
 
 </body>
 </html>

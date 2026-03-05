@@ -35,6 +35,8 @@ public class SecurityConfig {
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         // Управление пользователями — только ADMIN
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        //Журнал действий доступен только ADMIN
+                        .requestMatchers("/api/audit-log/**").hasRole("ADMIN")
                         //Справочники: чтение — все авторизованные, изменение — только ADMIN
                         .requestMatchers(HttpMethod.POST, "/api/dictionaries/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/dictionaries/**").hasRole("ADMIN")

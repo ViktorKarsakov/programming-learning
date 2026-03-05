@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,7 @@ public class DetectionCaseService {
     private final SocialGroupRepository socialGroupRepository;
     private final LaboratoryTestTypeRepository laboratoryTestTypeRepository;
     private final UserRepository userRepository;
+    private final SearchExportService searchExportService;
 
     //Новый пациент
     @Transactional
@@ -259,5 +261,16 @@ public class DetectionCaseService {
                 .diagnosisDate(detectionCase.getDiagnosisDate())
                 .createdAt(detectionCase.getCreatedAt())
                 .build();
+    }
+
+    //Поиск БЕЗ пагинации — для экспорта в Excel
+    public List<PatientSearchResult> searchForExport(PatientSearchRequest request) {
+        List<DetectionCase> cases = detectionCaseRepository.findAll(DetectionCaseSpecification.withFilters(request), Sort.by(Sort.Direction.DESC, "diagnosisDate"));
+        // Ограничиваем количество записей для экспорта
+        int limit = Math.min(cases.size(), 10000);
+        return cases.stream()
+                .limit(limit)
+                .map(this::toSearchResult)
+                .toList();
     }
 }

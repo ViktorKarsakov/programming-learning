@@ -314,6 +314,11 @@ async function openAddModal() {
 }
 
 async function openEditModal() {
+    // Оператору нельзя редактировать справочники — не открываем модалку
+    if (currentUserRole !== 'ADMIN') {
+        return;
+    }
+
     if (!selectedId) {
         showToast('Выберите запись', 'info');
         return;

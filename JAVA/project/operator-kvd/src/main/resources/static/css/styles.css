@@ -977,3 +977,96 @@ tbody tr.selected:hover {
     color: #1e40af;
     text-align: right;
 }
+
+/* ==================== SETTINGS ==================== */
+
+.settings-info {
+    padding: 4px 0;
+}
+
+.settings-info-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.settings-info-row:last-child {
+    border-bottom: none;
+}
+
+.settings-label {
+    width: 120px;
+    min-width: 120px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.settings-value {
+    font-size: 14px;
+    color: #111827;
+    font-weight: 500;
+}
+
+.settings-form {
+    max-width: 400px;
+}
+
+.settings-form .form-group {
+    margin-bottom: 16px;
+}
+
+/* ==================== AUDIT LOG ==================== */
+
+.audit-filters {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.audit-filters .form-group {
+    margin-bottom: 0;
+}
+
+.audit-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 16px 0 4px;
+}
+
+.pagination-info {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* Бейджи для действий */
+
+.badge-success {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge-info {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.badge-danger {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.badge-pink {
+    background: #fce7f3;
+    color: #9d174d;
+}
+
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}

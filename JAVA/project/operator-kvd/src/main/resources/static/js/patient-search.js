@@ -182,9 +182,14 @@ function goToPatientCard(row) {
 function updateActionButtons() {
     const selected = document.querySelector('#searchResults tr.selected');
     const viewBtn = document.getElementById('btnViewPatient');
+    const exportBtn = document.getElementById('btnExportExcel');
     
     if (viewBtn) {
         viewBtn.disabled = !selected;
+    }
+    // Кнопка экспорта активна если есть результаты поиска
+    if (exportBtn) {
+        exportBtn.disabled = !searchResults || searchResults.length === 0;
     }
 }
 
@@ -277,6 +282,72 @@ function viewPatientDetails() {
     
     // Переходим на карточку пациента
     window.location.href = `patient-card.html?id=${patientId}`;
+}
+
+/**
+ * Экспорт результатов поиска в Excel.
+ *
+ * Отправляет те же фильтры, что и обычный поиск, но на эндпоинт /export.
+ * Бэкенд возвращает .xlsx файл, фронт скачивает через Blob.
+ */
+async function exportToExcel() {
+    try {
+        const filters = {
+            lastName: document.getElementById('filterLastName').value.trim() || null,
+            firstName: document.getElementById('filterFirstName').value.trim() || null,
+            middleName: document.getElementById('filterMiddleName').value.trim() || null,
+            genderId: getSelectValue('filterGender'),
+            stateId: getSelectValue('filterState'),
+            diagnosisId: getSelectValue('filterDiagnosis'),
+            diagnosisGroupId: getSelectValue('filterDiagnosisGroup'),
+            doctorId: getSelectValue('filterDoctor'),
+            socialGroupId: getSelectValue('filterSocialGroup'),
+            ageFrom: getNumberValue('filterAgeFrom'),
+            ageTo: getNumberValue('filterAgeTo'),
+            createdFrom: document.getElementById('createdFrom').value || null,
+            createdTo: document.getElementById('createdTo').value || null,
+        };
+
+        showToast('Формирование файла...', 'info');
+
+        // Отправляем запрос напрямую через fetch (не через post() из common.js,
+        // потому что ответ — бинарный файл, а не JSON)
+        const csrfToken = getCsrfToken();
+        const headers = {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        };
+        if (csrfToken) {
+            headers['X-XSRF-TOKEN'] = csrfToken;
+        }
+
+        const response = await fetch('/api/detection-cases/export', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(filters)
+        });
+
+        if (!response.ok) {
+            throw new Error('Ошибка экспорта');
+        }
+
+        // Получаем файл как Blob и скачиваем
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'search-results.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast('Файл скачан', 'success');
+
+    } catch (error) {
+        showToast('Ошибка экспорта: ' + error.message, 'error');
+        console.error(error);
+    }
 }
 
 // Утилита для экранирования HTML

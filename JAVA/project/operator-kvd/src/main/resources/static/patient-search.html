@@ -52,6 +52,9 @@
             <a href="users.html" id="navUsers" style="display:none;">
                 <span class="icon">👥</span> Пользователи
             </a>
+            <a href="audit-log.html" id="navAuditLog" style="display:none;">
+                <span class="icon">📜</span> Журнал действий
+            </a>
             <a href="settings.html">
                 <span class="icon">⚙️</span> Настройки
             </a>
@@ -158,9 +161,14 @@
         <section class="card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                 <h2 class="card-title" style="margin-bottom: 0;">📋 Результаты поиска</h2>
-                <button class="btn btn-secondary btn-sm" id="btnViewPatient" onclick="viewPatientDetails()" disabled>
-                    Просмотр
-                </button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-secondary btn-sm" id="btnExportExcel" onclick="exportToExcel()" disabled>
+                        📥 Скачать Excel
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="btnViewPatient" onclick="viewPatientDetails()" disabled>
+                        Просмотр
+                    </button>
+                </div>
             </div>
 
             <div class="table-container">

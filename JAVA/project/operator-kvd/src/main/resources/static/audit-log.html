@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Главная - КВД</title>
+    <title>Журнал действий - КВД</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -16,7 +16,7 @@
         <div class="sidebar-subtitle">Информационная система</div>
 
         <nav class="sidebar-nav">
-            <a href="index.html" class="active">
+            <a href="index.html">
                 <span class="icon">🏠</span> Главная
             </a>
             <a href="patient-form.html">
@@ -52,7 +52,7 @@
             <a href="users.html" id="navUsers" style="display:none;">
                 <span class="icon">👥</span> Пользователи
             </a>
-            <a href="audit-log.html" id="navAuditLog" style="display:none;">
+            <a href="audit-log.html" id="navAuditLog" class="active" style="display:none;">
                 <span class="icon">📜</span> Журнал действий
             </a>
             <a href="settings.html">
@@ -74,48 +74,62 @@
     <!-- MAIN CONTENT -->
     <main class="content">
         <div class="page-header">
-            <h1 class="page-title">Главная</h1>
+            <h1 class="page-title">Журнал действий</h1>
         </div>
 
-        <!-- Карточки со статистикой -->
-        <div class="dashboard-cards" id="statsCards">
-            <div class="dash-card">
-                <div class="dash-card-icon">👥</div>
-                <div class="dash-card-value" id="statPatients">—</div>
-                <div class="dash-card-label">Пациентов</div>
-            </div>
-            <div class="dash-card">
-                <div class="dash-card-icon">📋</div>
-                <div class="dash-card-value" id="statCases">—</div>
-                <div class="dash-card-label">Всего случаев</div>
-            </div>
-            <div class="dash-card">
-                <div class="dash-card-icon">📅</div>
-                <div class="dash-card-value" id="statMonth">—</div>
-                <div class="dash-card-label">За текущий месяц</div>
-            </div>
-            <div class="dash-card">
-                <div class="dash-card-icon">📆</div>
-                <div class="dash-card-value" id="statYear">—</div>
-                <div class="dash-card-label">За текущий год</div>
-            </div>
-        </div>
-
-        <!-- Распределение по группам диагнозов -->
-        <section class="card" style="margin-top: 20px;">
-            <h2 class="card-title">Распределение по заболеваниям (текущий год)</h2>
-            <div id="diagnosisDistribution">
-                <div class="loading"><div class="spinner"></div></div>
+        <!-- Фильтры -->
+        <section class="card">
+            <div class="audit-filters">
+                <div class="form-group">
+                    <label>Тип записи</label>
+                    <select id="filterEntityType">
+                        <option value="">Все</option>
+                        <option value="PATIENT">Пациенты</option>
+                        <option value="CASE">Случаи</option>
+                        <option value="DICTIONARY">Справочники</option>
+                        <option value="USER">Пользователи</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Пользователь</label>
+                    <input type="text" id="filterUsername" placeholder="Логин...">
+                </div>
+                <div class="form-group" style="align-self: flex-end;">
+                    <button class="btn btn-secondary" onclick="loadAuditLog()">Применить</button>
+                </div>
             </div>
         </section>
 
+        <!-- Таблица журнала -->
+        <section class="card" style="margin-top: 20px;">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 150px;">Дата и время</th>
+                            <th style="width: 100px;">Пользователь</th>
+                            <th style="width: 90px;">Действие</th>
+                            <th style="width: 100px;">Тип</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auditTableBody">
+                        <tr><td colspan="5">
+                            <div class="loading"><div class="spinner"></div></div>
+                        </td></tr>
+                    </tbody>
+                </table>
+            </div>
 
+            <!-- Пагинация -->
+            <div class="audit-pagination" id="pagination"></div>
+        </section>
 
     </main>
 </div>
 
 <script src="js/common.js"></script>
-<script src="js/dashboard.js"></script>
+<script src="js/audit-log.js"></script>
 
 </body>
 </html>
