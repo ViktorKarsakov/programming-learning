@@ -75,7 +75,7 @@ public class DetectionController {
     }
 
     @PostMapping("/export")
-    public ResponseEntity<byte[]> exportSerach(@RequestParam PatientSearchRequest request) {
+    public ResponseEntity<byte[]> exportSearch(@RequestBody PatientSearchRequest request) {
         try {
             // Получаем все результаты без пагинации
             List<PatientSearchResult> results = detectionCaseService.searchForExport(request);

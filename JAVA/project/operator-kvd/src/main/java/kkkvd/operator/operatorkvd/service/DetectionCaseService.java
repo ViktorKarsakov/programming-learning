@@ -42,7 +42,6 @@ public class DetectionCaseService {
     private final SocialGroupRepository socialGroupRepository;
     private final LaboratoryTestTypeRepository laboratoryTestTypeRepository;
     private final UserRepository userRepository;
-    private final SearchExportService searchExportService;
 
     //Новый пациент
     @Transactional
