@@ -35,9 +35,6 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println("══════════════════════════════════════════════════");
         System.out.println("  Создана учётная запись администратора:");
-        System.out.println("  Логин: admin");
-        System.out.println("  Пароль: 236Sync75df");
-        System.out.println("  СМЕНИТЕ ПАРОЛЬ после первого входа!");
         System.out.println("══════════════════════════════════════════════════");
     }
 }

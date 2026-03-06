@@ -477,6 +477,19 @@ function showEmptyState(containerId, message = 'Нет данных') {
     }
 }
 
+// ==================== HTML UTILS ====================
+
+/**
+ * Экранирование HTML — защита от XSS.
+ * Используется при вставке пользовательских данных в DOM.
+ */
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 // ==================== АВТОЗАГРУЗКА ПОЛЬЗОВАТЕЛЯ ====================
 
 /**

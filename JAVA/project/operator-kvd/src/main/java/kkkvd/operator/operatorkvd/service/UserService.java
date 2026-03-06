@@ -40,8 +40,12 @@ public class UserService {
     }
 
     //Заблокировать или разблокировать пользователя
-    public User toggleEnabled(Long userId, boolean enabled){
+    public User toggleEnabled(Long userId, boolean enabled, String currentUsername){
         User user = userRepository.findById(userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
+        // Защита: нельзя отключить самого себя
+        if (!enabled && user.getUsername().equals(currentUsername)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Нельзя заблокировать самого себя");
+        }
         user.setEnabled(enabled);
         return userRepository.save(user);
     }

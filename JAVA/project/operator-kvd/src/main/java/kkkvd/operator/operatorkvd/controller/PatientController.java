@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/patients")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class PatientController {
 
     private final PatientService patientService;
@@ -43,7 +42,7 @@ public class PatientController {
     }
 
     @PostMapping("/{id}/cases")
-    public ResponseEntity<DetectionCaseResponse> addCaseToPatient(@PathVariable Long id, @RequestBody CreateCaseForPatientRequest request, Authentication authentication) {
+    public ResponseEntity<DetectionCaseResponse> addCaseToPatient(@PathVariable Long id, @Valid @RequestBody CreateCaseForPatientRequest request, Authentication authentication) {
         DetectionCaseResponse response = patientService.addCaseToPatient(id, request, authentication.getName());
         auditLogService.log("CREATE", "CASE", response.getId(), "Добавлен случай к пациенту #" + id, authentication.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

@@ -70,13 +70,3 @@ function formatNumber(n) {
     if (n == null) return '—';
     return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 }
-
-/**
- * Экранирование HTML (защита от XSS).
- */
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}

@@ -350,14 +350,6 @@ async function exportToExcel() {
     }
 }
 
-// Утилита для экранирования HTML
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
 // Поиск по Enter только в блоке фильтров
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && e.target.closest('#filtersCard')) {

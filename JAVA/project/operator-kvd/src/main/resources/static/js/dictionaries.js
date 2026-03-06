@@ -197,6 +197,21 @@ const dictionaryConfig = {
             { key: 'id', label: '#', width: '60px' },
             { key: 'name', label: 'Название' }
         ]
+    },
+    'population': {
+        title: 'Население',
+        endpoint: '/dictionaries/population',
+        fields: [
+            { name: 'state.id', label: 'Район', type: 'select', source: '/dictionaries/states', required: true },
+            { name: 'year', label: 'Год', type: 'text', required: true },
+            { name: 'countAll', label: 'Численность', type: 'text', required: true }
+        ],
+        columns: [
+            { key: 'id', label: '#', width: '60px' },
+            { key: 'state.name', label: 'Район' },
+            { key: 'year', label: 'Год', width: '80px' },
+            { key: 'countAll', label: 'Численность', width: '120px' }
+        ]
     }
 };
 

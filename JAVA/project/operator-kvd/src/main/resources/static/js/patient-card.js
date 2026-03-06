@@ -466,10 +466,3 @@ async function deleteCase(caseId) {
 }
 
 // ==================== УТИЛИТЫ ====================
-
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
