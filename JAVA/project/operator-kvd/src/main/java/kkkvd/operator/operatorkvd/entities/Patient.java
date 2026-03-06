@@ -8,9 +8,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "patients", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"last_name", "first_name", "middle_name", "birth_date"})
-})
+@Table(name = "patients")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -37,6 +35,4 @@ public class Patient {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gender_id",  nullable = false)
     private Gender gender;
-
-
 }
