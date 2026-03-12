@@ -44,6 +44,17 @@ public class DashboardService {
                 })
                 .toList();
         stats.put("diagnosisDistribution", distribution);
+
+        //Динамика по месяцам (для графика)
+        List<Object[]> byMonth = caseRepository.countByMonthBetween(yearStart, now);
+        int[] monthlyData = new int[12];
+        for (Object[] row : byMonth) {
+            int month = ((Number) row[0]).intValue();
+            int count = ((Number) row[1]).intValue();
+            monthlyData[month - 1] = count;
+        }
+        stats.put("monthlyCases", monthlyData);
+
         return stats;
     }
 }

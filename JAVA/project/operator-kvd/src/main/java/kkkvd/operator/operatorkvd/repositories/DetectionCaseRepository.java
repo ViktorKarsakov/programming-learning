@@ -79,4 +79,12 @@ public interface DetectionCaseRepository extends JpaRepository<DetectionCase, Lo
     List<Object[]> countByDiagnosisGroupBetween(
             @Param("dateFrom") LocalDate from,
             @Param("dateTo") LocalDate to);
+
+    @Query("SELECT MONTH(dc.diagnosisDate), COUNT(dc) FROM DetectionCase dc " +
+            "WHERE dc.diagnosisDate BETWEEN :dateFrom AND :dateTo " +
+            "GROUP BY MONTH(dc.diagnosisDate) " +
+            "ORDER BY MONTH(dc.diagnosisDate)")
+    List<Object[]> countByMonthBetween(
+            @Param("dateFrom") LocalDate dateFrom,
+            @Param("dateTo") LocalDate dateTo);
 }

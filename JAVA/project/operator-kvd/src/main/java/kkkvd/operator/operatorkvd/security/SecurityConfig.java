@@ -37,6 +37,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
                         //Журнал действий доступен только ADMIN
                         .requestMatchers("/api/audit-log/**").hasRole("ADMIN")
+                        //Бэкап БД
+                        .requestMatchers("/api/backup/**").hasRole("ADMIN")
                         //Справочники: чтение — все авторизованные, изменение — только ADMIN
                         .requestMatchers(HttpMethod.POST, "/api/dictionaries/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/dictionaries/**").hasRole("ADMIN")

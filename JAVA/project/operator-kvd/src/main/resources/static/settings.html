@@ -119,6 +119,18 @@
             </div>
         </section>
 
+        <!-- Резервная копия БД (только для ADMIN) -->
+        <section class="card" style="margin-top: 20px; display: none;" id="backupSection">
+            <h2 class="card-title">💾 Резервная копия базы данных</h2>
+            <p style="color: #6b7280; font-size: 14px; margin-bottom: 16px;">
+                Скачать полную копию базы данных в формате SQL.
+                Файл можно использовать для восстановления через pgAdmin или psql.
+            </p>
+            <button class="btn btn-primary" onclick="downloadBackup()" id="btnBackup">
+                📥 Скачать бэкап
+            </button>
+        </section>
+
         <!-- Информация о системе (видна всем) -->
         <section class="card" style="margin-top: 20px;">
             <h2 class="card-title">ℹ️ О системе</h2>
