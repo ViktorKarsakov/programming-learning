@@ -1,6 +1,7 @@
 package kkkvd.operator.operatorkvd.dto;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ public class CreateCaseForPatientRequest {
     @NotNull(message = "Диагноз обязателен")
     private Long diagnosisId;
     @NotNull(message = "Дата диагноза обязательна")
+    @PastOrPresent(message = "Дата диагноза не может быть в будущем")
     private LocalDate diagnosisDate;
     @NotNull(message = "Врач обязателен")
     private Long doctorId;

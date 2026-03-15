@@ -2,6 +2,7 @@ package kkkvd.operator.operatorkvd.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ public class CreateDetectionCaseRequest {
     private String firstName;
     private String middleName;
     @NotNull(message = "Дата рождения обязательна")
+    @PastOrPresent(message = "Дата рождения не может быть в будущем")
     private LocalDate birthDate;
     @NotNull(message = "Пол обязателен")
     private Long genderId;
@@ -34,6 +36,7 @@ public class CreateDetectionCaseRequest {
     @NotNull(message = "Диагноз обязателен")
     private Long diagnosisId;
     @NotNull(message = "Дата диагноза обязательна")
+    @PastOrPresent(message = "Дата диагноза не может быть в будущем")
     private LocalDate diagnosisDate;
     @NotNull(message = "Врач обязателен")
     private Long doctorId;

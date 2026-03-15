@@ -258,7 +258,9 @@ function openEditPatientModal() {
     document.getElementById('editGender').value = p.gender?.id || '';
     document.getElementById('editBirthDate').value = p.birthDate || '';
     document.getElementById('editAddress').value = p.address || '';
-    
+
+    document.getElementById('editBirthDate').max = new Date().toISOString().split('T')[0];
+
     openModal('editPatientModal');
     
     // Подсказки адреса через DaData
@@ -277,6 +279,12 @@ async function savePatient() {
     
     if (!data.lastName || !data.firstName || !data.genderId || !data.birthDate) {
         showToast('Заполните обязательные поля', 'error');
+        return;
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    if (data.birthDate > today) {
+        showToast('Дата рождения не может быть в будущем', 'error');
         return;
     }
     
@@ -327,6 +335,7 @@ function openAddCaseModal() {
     document.getElementById('caseSocialGroup').value = '';
     document.getElementById('caseDiagnosis').value = '';
     document.getElementById('caseDiagnosisDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('caseDiagnosisDate').max = new Date().toISOString().split('T')[0];
     document.getElementById('caseDoctor').value = '';
     document.getElementById('casePlace').value = '';
     document.getElementById('caseProfile').value = '';
@@ -425,6 +434,12 @@ async function saveCase() {
             return;
         }
     }
+
+    const today = new Date().toISOString().split('T')[0];
+    if (data.diagnosisDate > today) {
+        showToast('Дата диагноза не может быть в будущем', 'error');
+        return;
+    }
     
     try {
         if (editingCaseId) {
@@ -464,5 +479,3 @@ async function deleteCase(caseId) {
         showToast('Ошибка удаления: ' + error.message, 'error');
     }
 }
-
-// ==================== УТИЛИТЫ ====================

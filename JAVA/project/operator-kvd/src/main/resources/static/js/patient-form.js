@@ -10,6 +10,10 @@ async function initPatientForm() {
     // Устанавливаем текущую дату по умолчанию
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('diagnosisDate').value = today;
+
+    // Ограничиваем даты — нельзя выбрать будущее
+    document.getElementById('birthDate').max = today;
+    document.getElementById('diagnosisDate').max = today;
     
     // Загружаем все справочники
     await loadAllDictionaries();
@@ -173,6 +177,17 @@ function validatePatientForm(data) {
         if (typeof value === 'number' && Number.isNaN(value)) {
             throw new Error(`Заполните поле "${label}"`);
         }
+    }
+
+    // Проверка дат — не в будущем
+    const today = new Date().toISOString().split('T')[0];
+
+    if (data.birthDate > today) {
+        throw new Error('Дата рождения не может быть в будущем');
+    }
+
+    if (data.diagnosisDate > today) {
+        throw new Error('Дата диагноза не может быть в будущем');
     }
 }
 
